@@ -6,9 +6,9 @@ namespace Exercises.Delegate
     {
         static void Main(string[] args)
         {
-            Point[] points = new Point[10];
+            var points = new Point[10];
             ArrayIni(points);
-            Point b = Array.Find(points, GetMinPoint);
+            var b = Array.Find(points, GetMinPoint);
             Console.WriteLine($"First min point: {b}");
             Console.WriteLine();
             PrintArray<Point>(points);
@@ -20,22 +20,21 @@ namespace Exercises.Delegate
             PrintArray<Point>(points);
             Console.ReadLine();
         }
-
+        
         static void ArrayIni(Point[] array)
         {
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = new Point(array.Length-i, array.Length - i);
+                array[i] = new Point(array.Length - i, array.Length - i);
             }
         }
-
+        
         static bool GetMinPoint(Point point)
         {
-            return Math.Sqrt(Math.Pow(point.X, 2) + Math.Pow(point.Y, 2)) < 1;
-
-
+            var shortWay = Math.Sqrt(Math.Pow(point.X, 2) + Math.Pow(point.Y, 2));
+            return  shortWay<= 2;
         }
-
+        
         static void PrintArray<T>(T[] array)
         {
             Console.WriteLine("Array :");
@@ -45,11 +44,12 @@ namespace Exercises.Delegate
             }
             Console.WriteLine();
         }
-
+        
         static int Compare(Point a, Point b)
         {
             return (a.X + a.Y).CompareTo(b.X + b.Y);
         }
+
 
     }
 }

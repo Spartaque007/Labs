@@ -1,107 +1,124 @@
 ﻿using System;
-using System.Collections;
 
 namespace Exercises.Delegate
 {
     public class Point : IComparable
     {
+        private double _radius;
+        private double _angle;
 
-        public enum PointRepresentation { Polar, Rectangular }
+        public double X
+        {
+            get
+            {
+                return GetRadiusX(_radius, _angle);
+            }
+        }
 
-        private double r, a;
+        public double Y
+        {
+            get
+            {
+                return GetRadiusY(_radius, _angle);
+            }
+        }
+
+        public double Radius
+        {
+            get
+            {
+                return _radius;
+            }
+        }
+
+        public double Angle
+        {
+            get
+            {
+                return _angle;
+            }
+        }
+
 
         public Point(double x, double y)
         {
-            r = RadiusGivenXy(x, y);
-            a = AngleGivenXy(x, y);
+            _radius = GetRadiusXy(x, y);
+            _angle = GetAngleXy(x, y);
         }
 
         public Point(double par1, double par2, PointRepresentation pr)
         {
             if (pr == PointRepresentation.Polar)
             {
-                r = par1; a = par2;
+                _radius = par1;
+                _angle = par2;
             }
             else
             {
-                r = RadiusGivenXy(par1, par2);
-                a = AngleGivenXy(par1, par2);
+                _radius = GetRadiusXy(par1, par2);
+                _angle = GetAngleXy(par1, par2);
             }
         }
 
-        public double X
-        {
-            get { return XGivenRadiusAngle(r, a); }
-        }
 
-        public double Y
-        {
-            get { return YGivenRadiusAngle(r, a); }
-        }
-
-
-        public double Radius
-        {
-            get { return r; }
-        }
-
-        public double Angle
-        {
-            get { return a; }
-        }
-
-        public void Move(double dx, double dy)
-        {
-            double x, y;
-            x = XGivenRadiusAngle(r, a); y = YGivenRadiusAngle(r, a);
-            r = RadiusGivenXy(x + dx, y + dy);
-            a = AngleGivenXy(x + dx, y + dy);
-        }
-
-        public void Rotate(double angle)
-        {
-            a += angle;
-        }
-
-        public override string ToString()
-        {
-            return "(" + XGivenRadiusAngle(r, a) + "," + YGivenRadiusAngle(r, a) + ")";
-        }
-
-
-        private static double RadiusGivenXy(double x, double y)
-        {
-            return Math.Sqrt(x * x + y * y);
-        }
-
-        private static double AngleGivenXy(double x, double y)
-        {
-            return Math.Atan2(y, x);
-        }
-
-        private static double XGivenRadiusAngle(double r, double a)
-        {
-            return r * Math.Cos(a);
-        }
-
-        private static double YGivenRadiusAngle(double r, double a)
-        {
-            return r * Math.Sin(a);
-        }
-
-        
         public int CompareTo(object obj)
         {
             Point x = obj as Point;
-            if (x != null )
+            if (x != null)
             {
-                return this.r.CompareTo(x.r);
+                return _radius.CompareTo(x._radius);
             }
             else
             {
                 throw new ArgumentException(" Parameters type filed");
             }
         }
-    }
 
+
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
+        }
+
+
+        public void Move(double dx, double dy)
+        {
+            var x = GetRadiusX(_radius, _angle);
+            var y = GetRadiusY(_radius, _angle);
+            _radius = GetRadiusXy(x + dx, y + dy);
+            _angle = GetAngleXy(x + dx, y + dy);
+        }
+
+
+        public void Rotate(double angle)
+        {
+            _angle += angle;
+        }
+
+
+        private static double GetRadiusXy(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
+
+
+        private static double GetAngleXy(double x, double y)
+        {
+            return Math.Atan2(y, x);
+        }
+
+
+        private static double GetRadiusX(double r, double a)
+        {
+            return r * Math.Cos(a);
+        }
+
+
+        private static double GetRadiusY(double r, double a)
+        {
+            return r * Math.Sin(a);
+        }
+
+
+    }
 }
