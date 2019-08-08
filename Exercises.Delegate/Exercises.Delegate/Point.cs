@@ -74,12 +74,10 @@ namespace Exercises.Delegate
             }
         }
 
-
         public override string ToString()
         {
             return $"({X}, {Y})";
         }
-
 
         public void Move(double dx, double dy)
         {
@@ -88,7 +86,6 @@ namespace Exercises.Delegate
             _radius = GetRadiusXy(x + dx, y + dy);
             _angle = GetAngleXy(x + dx, y + dy);
         }
-
 
         public void Rotate(double angle)
         {
@@ -101,24 +98,19 @@ namespace Exercises.Delegate
             return Math.Sqrt(x * x + y * y);
         }
 
-
         private static double GetAngleXy(double x, double y)
         {
             return Math.Atan2(y, x);
         }
-
 
         private static double GetRadiusX(double r, double a)
         {
             return r * Math.Cos(a);
         }
 
-
         private static double GetRadiusY(double r, double a)
         {
             return r * Math.Sin(a);
         }
-
-
     }
 }

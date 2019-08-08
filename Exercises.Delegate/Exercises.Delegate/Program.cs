@@ -49,7 +49,5 @@ namespace Exercises.Delegate
         {
             return (a.X + a.Y).CompareTo(b.X + b.Y);
         }
-
-
     }
 }
