@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Exercises.String
 {
@@ -10,6 +6,19 @@ namespace Exercises.String
     {
         static void Main(string[] args)
         {
+            string url = "https://www.google.com/maps/dir/" +
+                "?api=1&" +
+                "origin=Paris,France&" +
+                "destination=Cherbourg,France&" +
+                "travelmode=driving&" +
+                "waypoints=Versailles,France%7" +
+                "CChartres,France%7" +
+                "CLe+Mans,France%7" +
+                "CCaen,France&" +
+                "waypoint_place_ids=ChIJdUyx15R95kcRj85ZX8H8OAU%7CChIJKzGHdEgM5EcR_OBTT3nQoEA%7CChIJG2LvQNCI4kcRKXNoAsPi1Mc%7CChIJ06tnGbxCCkgRsfNjEQMwUsc";
+
+            GoogleMapsModel travelWay = new GoogleMapsModel(url);
+            Console.Read();
         }
     }
 }
