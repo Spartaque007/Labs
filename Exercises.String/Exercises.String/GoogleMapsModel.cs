@@ -6,8 +6,6 @@ namespace Exercises.String
 {
     class GoogleMapsModel
     {
-        private readonly char[] _separators = { '&' };
-
         private Dictionary<string, List<string>> urlStruct = new Dictionary<string, List<string>>();
 
 
@@ -17,17 +15,17 @@ namespace Exercises.String
             int i = 0;
             while (i < _url.Length)
             {
-                StringBuilder _currentValue = new StringBuilder();
-                StringBuilder _currentKey = null;
-                List<string> _currentValues = new List<string>();
+                StringBuilder currentValue = new StringBuilder();
+                StringBuilder currentKey = null;
+                List<string> currentValues = new List<string>();
 
                 if (_url[i] == '&')
                 {
                     i++;
-                    _currentKey = new StringBuilder();
+                    currentKey = new StringBuilder();
                     while (_url[i] != '=')
                     {
-                        _currentKey.Append(_url[i]);
+                        currentKey.Append(_url[i]);
                         i++;
                     }
                     i++;
@@ -37,22 +35,22 @@ namespace Exercises.String
                 {
                     if (_url[i] == '|')
                     {
-                        _currentValues.Add(_currentValue.ToString());
-                        _currentValue.Clear();
+                        currentValues.Add(currentValue.ToString());
+                        currentValue.Clear();
                         i++;
                     }
 
-                    _currentValue.Append(_url[i]);
+                    currentValue.Append(_url[i]);
                     i++;
                 }
 
-                _currentValues.Add(_currentValue.ToString());
+                currentValues.Add(currentValue.ToString());
 
-                if (_currentKey == null)
+                if (currentKey == null)
                 {
-                    _currentKey = new StringBuilder("url");
+                    currentKey = new StringBuilder("url");
                 }
-                urlStruct.Add(_currentKey.ToString(), _currentValues);
+                urlStruct.Add(currentKey.ToString(), currentValues);
             }
         }
 
@@ -84,7 +82,7 @@ namespace Exercises.String
                     }
                 }
             }
-            return  EncodeUrl( url.ToString());
+            return EncodeUrl(url.ToString());
         }
 
         private string EncodeUrl(string url)
