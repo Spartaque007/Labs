@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace Exercises.String
@@ -7,59 +10,97 @@ namespace Exercises.String
     {
         private readonly char[] _separators = { '&' };
 
-        public string UrlPath { get; set; }
-
-        public string Origin { get; set; }
-
-        public string Destination { get; set; }
-
-        public string TravelMode { get; set; }
-
-        public string Waypoint_place_id { get; set; }
-
-        public List<string> Waypoints { get; set; } = new List<string>();
+        private Dictionary<string, List<string>> urlStruct = new Dictionary<string, List<string>>();
 
 
         public GoogleMapsModel(string url)
         {
-            var urlArray = GetArrayFromUrl(url);
-            UrlPath = urlArray[0];
-            for (int i = 1; i < urlArray.Length; i++)
+            string _url = HttpUtility.UrlDecode(url);
+            int i = 0;
+            while (i < _url.Length)
             {
-                if (urlArray[i].Contains("origin"))
+                StringBuilder _currentValue = new StringBuilder();
+                StringBuilder _currentKey = null;
+                List<string> _currentValues = new List<string>();
+
+                if (_url[i] == '&')
                 {
-                    Origin = urlArray[i].Substring(7);
-                }
-                else if (urlArray[i].Contains("destination"))
-                {
-                    Destination = urlArray[i].Substring(12);
-                }
-                else if (urlArray[i].Contains("waypoints"))
-                {
-                    char[] separators = { '|', '=' };
-                    string[] _waypoints = urlArray[i].Split(separators);
-                    for (int j = 1; j < _waypoints.Length; j++)
+                    i++;
+                    _currentKey = new StringBuilder();
+                    while (_url[i] != '=')
                     {
-                        Waypoints.Add(_waypoints[j]);
+                        _currentKey.Append(_url[i]);
+                        i++;
                     }
+                    i++;
                 }
-                else if (urlArray[i].Contains("travelmode"))
+
+                while (i < _url.Length && _url[i] != '&')
                 {
-                    TravelMode = urlArray[i].Substring(11);
+                    if (_url[i] == '|')
+                    {
+                        _currentValues.Add(_currentValue.ToString());
+                        _currentValue.Clear();
+                        i++;
+                    }
+
+                    _currentValue.Append(_url[i]);
+                    i++;
                 }
-                else if (urlArray[i].Contains("waypoint_place_ids"))
+
+                _currentValues.Add(_currentValue.ToString());
+
+                if (_currentKey == null)
                 {
-                    Waypoint_place_id = urlArray[i].Substring(19);
+                    _currentKey = new StringBuilder("url");
                 }
+
+                
+                urlStruct.Add(_currentKey.ToString(), _currentValues);
             }
         }
 
-
-        private string[] GetArrayFromUrl(string url)
+        public override string ToString()
         {
-            string decodingUrl = HttpUtility.UrlDecode(url);
-            string[] urlArray = decodingUrl.Split(_separators);
-            return urlArray;
+            StringBuilder url = new StringBuilder();
+            for (int i = 0; i < urlStruct.Count; i++)
+            {
+                var e = urlStruct.ElementAt(i);
+                if (e.Key == "url")
+                {
+                    url.Append($"{e.Value[0]}&");
+                    continue;
+                }
+                else
+                {
+                    if (e.Value.Count > 1)
+                    {
+                        url.Append($"{e.Key}={e.Value[0]}");
+                        for (int j = 1; j < e.Value.Count; j++)
+                        {
+                            url.Append($"%7{e.Value[j]}");
+                        }
+
+                        url.Append("&");
+                    }
+                    else
+                    {
+                        url.Append($"{e.Key}={e.Value[0]}&");
+                    }
+                }
+            }
+
+            return  HttpUtility.UrlEncode( url.ToString(), Encoding.UTF32);
+        }
+
+        private string EncodingUrl(string url)
+        {
+
+        }
+
+        private string DecodingUrl(string url)
+        {
+
         }
     }
 }
