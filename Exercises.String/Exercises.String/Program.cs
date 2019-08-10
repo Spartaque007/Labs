@@ -21,16 +21,7 @@ namespace Exercises.String
 
             GoogleMapsModel travelWay = new GoogleMapsModel(url);
             var g = travelWay.ToString();
-            for (int i = 0; i < g.Length; i++)
-            {
-                Console.WriteLine($"{url[i]} | {g[i]}");
-                
-            }
-            
-            // Console.WriteLine();
-            // Console.WriteLine();
             Console.WriteLine(travelWay);
-            // Console.WriteLine();
             Console.WriteLine(url.Equals(travelWay.ToString()));
             Console.Read();
         }

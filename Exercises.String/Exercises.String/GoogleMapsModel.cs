@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Web;
 
 namespace Exercises.String
 {
@@ -15,7 +13,7 @@ namespace Exercises.String
 
         public GoogleMapsModel(string url)
         {
-            string _url = HttpUtility.UrlDecode(url);
+            string _url = DecodeUrl(url);
             int i = 0;
             while (i < _url.Length)
             {
@@ -54,8 +52,6 @@ namespace Exercises.String
                 {
                     _currentKey = new StringBuilder("url");
                 }
-
-                
                 urlStruct.Add(_currentKey.ToString(), _currentValues);
             }
         }
@@ -68,39 +64,46 @@ namespace Exercises.String
                 var e = urlStruct.ElementAt(i);
                 if (e.Key == "url")
                 {
-                    url.Append($"{e.Value[0]}&");
+                    url.Append($"{e.Value[0]}");
                     continue;
                 }
                 else
                 {
                     if (e.Value.Count > 1)
                     {
-                        url.Append($"{e.Key}={e.Value[0]}");
+                        url.Append($"&{e.Key}={e.Value[0]}");
+
                         for (int j = 1; j < e.Value.Count; j++)
                         {
-                            url.Append($"%7{e.Value[j]}");
+                            url.Append($"|{e.Value[j]}");
                         }
-
-                        url.Append("&");
                     }
                     else
                     {
-                        url.Append($"{e.Key}={e.Value[0]}&");
+                        url.Append($"&{e.Key}={e.Value[0]}");
                     }
                 }
             }
-
-            return  HttpUtility.UrlEncode( url.ToString(), Encoding.UTF32);
+            return  EncodeUrl( url.ToString());
         }
 
-        private string EncodingUrl(string url)
+        private string EncodeUrl(string url)
         {
+            url.Replace("|", "%7C");
+            url.Replace("+", " ");
+            url.Replace("%25", "%");
 
+            return url;
         }
 
-        private string DecodingUrl(string url)
+        private string DecodeUrl(string url)
         {
+            url.Replace("%7C", "|");
+            url.Replace("+", " ");
+            url.Replace("%2C", " ");
+            url.Replace("%", "%25");
 
+            return url;
         }
     }
 }
