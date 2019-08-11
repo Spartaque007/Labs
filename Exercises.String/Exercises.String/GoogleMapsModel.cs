@@ -6,7 +6,7 @@ namespace Exercises.String
 {
     class GoogleMapsModel
     {
-        private Dictionary<string, List<string>> urlStruct = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> UrlStruct { get; }=new Dictionary<string, List<string>>();
 
 
         public GoogleMapsModel(string url)
@@ -50,16 +50,16 @@ namespace Exercises.String
                 {
                     currentKey = new StringBuilder("url");
                 }
-                urlStruct.Add(currentKey.ToString(), currentValues);
+                UrlStruct.Add(currentKey.ToString(), currentValues);
             }
         }
 
         public override string ToString()
         {
             StringBuilder url = new StringBuilder();
-            for (int i = 0; i < urlStruct.Count; i++)
+            for (int i = 0; i < UrlStruct.Count; i++)
             {
-                var e = urlStruct.ElementAt(i);
+                var e = UrlStruct.ElementAt(i);
                 if (e.Key == "url")
                 {
                     url.Append($"{e.Value[0]}");
