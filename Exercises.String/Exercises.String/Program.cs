@@ -22,7 +22,16 @@ namespace Exercises.String
             GoogleMapsModel travelWay = new GoogleMapsModel(url);
             var g = travelWay.ToString();
             Console.WriteLine(travelWay);
+            Console.WriteLine(travelWay.ToString().Length);
             Console.WriteLine(url.Equals(travelWay.ToString()));
+            Console.WriteLine(url);
+            Console.WriteLine(url.Length);
+
+            for (int i = 0; i < url.Length; i++)
+            {
+                Console.WriteLine(url[i]+ "|" + travelWay.ToString()[i]);
+            }
+
             Console.Read();
         }
     }

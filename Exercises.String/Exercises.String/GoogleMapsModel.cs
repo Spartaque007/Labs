@@ -1,107 +1,138 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 
 namespace Exercises.String
 {
     class GoogleMapsModel
     {
-        public Dictionary<string, List<string>> UrlStruct { get; }=new Dictionary<string, List<string>>();
+        private const char _parametersSeparator = '&';
+        private const char _valuesSeparator = '|';
+        private const char _parameterToValueSeparator = '=';
+        private const char _mapToQuerySeparator = '?';
 
-
-        public GoogleMapsModel(string url)
+        private Dictionary<string, char> _separators = new Dictionary<string, char>()
         {
-            string _url = DecodeUrl(url);
-            int i = 0;
-            while (i < _url.Length)
+            {"+" , ' ' },
+            {"%3C", '<'},
+            {"%3E", '>'},
+            {"%23", '#'},
+            {"%25", '%'},
+            {"%7C",_valuesSeparator}
+        };
+
+        public string Protocol { get; set; }
+
+        public string Host { get; set; }
+
+        public string AbsolutePath { get; set; }
+
+        public Dictionary<string, List<string>> Parameters { get; set; } = new Dictionary<string, List<string>>();
+
+
+        public GoogleMapsModel(string inputUrl)
+        {
+            var url = new Uri(inputUrl);
+            Protocol = url.Scheme;
+            Host = url.Host;
+            AbsolutePath = url.AbsolutePath;
+            string queryString = url.Query.Substring(1);
+            var urlArray = queryString.Split(_parametersSeparator);
+            for (int i = 0; i < urlArray.Length; i++)
             {
-                StringBuilder currentValue = new StringBuilder();
-                StringBuilder currentKey = null;
-                List<string> currentValues = new List<string>();
-
-                if (_url[i] == '&')
-                {
-                    i++;
-                    currentKey = new StringBuilder();
-                    while (_url[i] != '=')
-                    {
-                        currentKey.Append(_url[i]);
-                        i++;
-                    }
-                    i++;
-                }
-
-                while (i < _url.Length && _url[i] != '&')
-                {
-                    if (_url[i] == '|')
-                    {
-                        currentValues.Add(currentValue.ToString());
-                        currentValue.Clear();
-                        i++;
-                    }
-
-                    currentValue.Append(_url[i]);
-                    i++;
-                }
-
-                currentValues.Add(currentValue.ToString());
-
-                if (currentKey == null)
-                {
-                    currentKey = new StringBuilder("url");
-                }
-                UrlStruct.Add(currentKey.ToString(), currentValues);
+                var currentParameter = GetParameterWithValues(urlArray[i]);
+                Parameters.Add(currentParameter.Key, currentParameter.Value);
             }
         }
+
 
         public override string ToString()
         {
-            StringBuilder url = new StringBuilder();
-            for (int i = 0; i < UrlStruct.Count; i++)
+            var urlStringBuilder = new StringBuilder();
+            urlStringBuilder.Append(Protocol)
+                .Append("://")
+                .Append(Host)
+                .Append(AbsolutePath)
+                .Append(_mapToQuerySeparator);
+            if (Parameters.Count != 0)
             {
-                var e = UrlStruct.ElementAt(i);
-                if (e.Key == "url")
+                for (int i = 0; i < Parameters.Count; i++)
                 {
-                    url.Append($"{e.Value[0]}");
-                    continue;
-                }
-                else
-                {
-                    if (e.Value.Count > 1)
+                    var e = Parameters.ElementAt(i);
+                    urlStringBuilder.Append(e.Key);
+                    if (e.Value != null)
                     {
-                        url.Append($"&{e.Key}={e.Value[0]}");
-
-                        for (int j = 1; j < e.Value.Count; j++)
-                        {
-                            url.Append($"|{e.Value[j]}");
-                        }
+                        urlStringBuilder.Append(_parameterToValueSeparator);
+                        urlStringBuilder.Append(GetValuesToString(e.Value));
                     }
-                    else
+                    if (i < Parameters.Count - 1)
                     {
-                        url.Append($"&{e.Key}={e.Value[0]}");
+                        urlStringBuilder.Append(_parametersSeparator);
                     }
                 }
             }
-            return EncodeUrl(url.ToString());
+            return urlStringBuilder.ToString();
         }
 
-        private string EncodeUrl(string url)
+        private KeyValuePair<string, List<string>> GetParameterWithValues(string parameterWithValues)
         {
-            url.Replace("|", "%7C");
-            url.Replace("+", " ");
-            url.Replace("%25", "%");
-
-            return url;
+            var values = new List<string>();
+            string[] stringArray = Decode(parameterWithValues).Split(_parameterToValueSeparator);
+            if (stringArray.Length == 1)
+            {
+                return new KeyValuePair<string, List<string>>(HttpUtility.UrlDecode(stringArray[0]), null);
+            }
+            else
+            {
+                string[] splittedValues = stringArray[1].Split(_valuesSeparator);
+                for (int i = 0; i < splittedValues.Length; i++)
+                {
+                    values.Add(HttpUtility.UrlDecode(splittedValues[i]));
+                }
+                return new KeyValuePair<string, List<string>>(stringArray[0], values);
+            }
         }
 
-        private string DecodeUrl(string url)
+        private string Encode(string url)
         {
-            url.Replace("%7C", "|");
-            url.Replace("+", " ");
-            url.Replace("%2C", " ");
-            url.Replace("%", "%25");
+            string encodingUrl = "";
+            for (int i = 0; i < _separators.Count; i++)
+            {
+                var e = _separators.ElementAt(i);
+                encodingUrl = url.Replace(e.Value.ToString(), e.Key);
+            }
+            return encodingUrl;
+        }
 
-            return url;
+        private string Decode(string url)
+        {
+            string decodingUrl = null;
+            for (int i = 0; i < _separators.Count; i++)
+            {
+                var e = _separators.ElementAt(i);
+                decodingUrl = url.Replace(e.Key, e.Value.ToString());
+            }
+            return decodingUrl;
+        }
+
+        private string GetValuesToString(List<string> values)
+        {
+            if (values.Count == 1)
+            {
+                return Encode(values[0]);
+            }
+            else
+            {
+                StringBuilder valuesStringBuilder = new StringBuilder(values[0]);
+                for (int i = 1; i < values.Count; i++)
+                {
+                    valuesStringBuilder.Append("|");
+                    valuesStringBuilder.Append(HttpUtility.UrlEncode(values[i]));
+                }
+                return Encode(valuesStringBuilder.ToString());
+            }
         }
     }
 }
