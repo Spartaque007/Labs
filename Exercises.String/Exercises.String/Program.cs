@@ -20,18 +20,16 @@ namespace Exercises.String
                 "CChIJ06tnGbxCCkgRsfNjEQMwUsc";
 
             GoogleMapsModel travelWay = new GoogleMapsModel(url);
-            var g = travelWay.ToString();
-            Console.WriteLine(travelWay);
-            Console.WriteLine(travelWay.ToString().Length);
-            Console.WriteLine(url.Equals(travelWay.ToString()));
-            Console.WriteLine(url);
-            Console.WriteLine(url.Length);
-
-            for (int i = 0; i < url.Length; i++)
-            {
-                Console.WriteLine(url[i]+ "|" + travelWay.ToString()[i]);
-            }
-
+            var travelWayUrl = travelWay.ToString();
+            GoogleMapsModel travelWay2 = new GoogleMapsModel(travelWayUrl);
+            Console.WriteLine(travelWayUrl);
+            Console.WriteLine(travelWayUrl.Length);
+            Console.WriteLine("**************");
+            Console.WriteLine(travelWay2);
+            Console.WriteLine(travelWay2.ToString().Length);
+            Console.WriteLine("**************");
+            bool equals = travelWay.ToString().Equals(travelWay2.ToString());
+            Console.WriteLine( equals==true ? "URls match" : "URls don't match");
             Console.Read();
         }
     }
