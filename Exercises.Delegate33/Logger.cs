@@ -15,6 +15,5 @@ namespace Exercises.Delegate33
                 return _result.ToString();
             };
         }
-
     }
 }
