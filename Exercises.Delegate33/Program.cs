@@ -10,8 +10,7 @@ namespace Exercises.Delegate33
             functions += () => "1";
             functions += () => "2";
             functions += () => "3";
-            var invoker = new Invoker(functions);
-            var result = invoker.GetResultFromFunctions();
+            var result = functions.InvokeList();
             Console.WriteLine(result);
             Console.ReadLine();
         }
