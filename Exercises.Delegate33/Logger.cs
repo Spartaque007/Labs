@@ -2,16 +2,16 @@
 
 namespace Exercises.Delegate33
 {
-    public  class Logger
+    public class Logger
     {
-        private Func<string> _delegates;
         private string _result = "";
 
-       public Func<string> GetWrapper(Func<string> func)
+        public Func<string> GetWrapper(Func<string> func)
         {
-            return () => {
+            return () =>
+            {
                 var a = func();
-                _result+=a;
+                _result += a;
                 return _result.ToString();
             };
         }
