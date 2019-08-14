@@ -8,10 +8,10 @@ namespace Exercises.String
 {
     class GoogleMapsModel
     {
-        private const char _parametersSeparator = '&';
-        private const char _valuesSeparator = '|';
-        private const char _parameterToValueSeparator = '=';
-        private const char _mapToQuerySeparator = '?';
+        private const char ParametersSeparator = '&';
+        private const char ValuesSeparator = '|';
+        private const char ParameterToValueSeparator = '=';
+        private const char MapToQuerySeparator = '?';
 
         private Dictionary<string, char> _separators = new Dictionary<string, char>()
         {
@@ -20,7 +20,7 @@ namespace Exercises.String
             {"%3E", '>'},
             {"%23", '#'},
             {"%25", '%'},
-            {"%7C",_valuesSeparator}
+            {"%7C", ValuesSeparator}
         };
 
         public string Protocol { get; set; }
@@ -39,7 +39,7 @@ namespace Exercises.String
             Host = url.Host;
             AbsolutePath = url.AbsolutePath;
             string queryString = url.Query.Substring(1);
-            var urlArray = queryString.Split(_parametersSeparator);
+            var urlArray = queryString.Split(ParametersSeparator);
             for (int i = 0; i < urlArray.Length; i++)
             {
                 var currentParameter = GetParameterWithValues(urlArray[i]);
@@ -55,7 +55,7 @@ namespace Exercises.String
                 .Append("://")
                 .Append(Host)
                 .Append(AbsolutePath)
-                .Append(_mapToQuerySeparator);
+                .Append(MapToQuerySeparator);
             if (Parameters.Count != 0)
             {
                 for (int i = 0; i < Parameters.Count; i++)
@@ -64,12 +64,12 @@ namespace Exercises.String
                     urlStringBuilder.Append(e.Key);
                     if (e.Value != null)
                     {
-                        urlStringBuilder.Append(_parameterToValueSeparator);
+                        urlStringBuilder.Append(ParameterToValueSeparator);
                         urlStringBuilder.Append(GetValuesToString(e.Value));
                     }
                     if (i < Parameters.Count - 1)
                     {
-                        urlStringBuilder.Append(_parametersSeparator);
+                        urlStringBuilder.Append(ParametersSeparator);
                     }
                 }
             }
@@ -79,14 +79,14 @@ namespace Exercises.String
         private KeyValuePair<string, List<string>> GetParameterWithValues(string parameterWithValues)
         {
             var values = new List<string>();
-            string[] stringArray = Decode(parameterWithValues).Split(_parameterToValueSeparator);
+            var stringArray = Decode(parameterWithValues).Split(ParameterToValueSeparator);
             if (stringArray.Length == 1)
             {
                 return new KeyValuePair<string, List<string>>(HttpUtility.UrlDecode(stringArray[0]), null);
             }
             else
             {
-                string[] splittedValues = stringArray[1].Split(_valuesSeparator);
+                string[] splittedValues = stringArray[1].Split(ValuesSeparator);
                 for (int i = 0; i < splittedValues.Length; i++)
                 {
                     values.Add(HttpUtility.UrlDecode(splittedValues[i]));
