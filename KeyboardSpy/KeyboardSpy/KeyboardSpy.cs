@@ -12,9 +12,6 @@ namespace KeyboardSpy
 
         private static LowLevelKeyboardProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
-
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-
         private static Action<int> _action;
 
 
@@ -38,6 +35,7 @@ namespace KeyboardSpy
             UnhookWindowsHookEx(_hookID);
         }
 
+
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
@@ -48,6 +46,10 @@ namespace KeyboardSpy
 
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
+
+
+
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
