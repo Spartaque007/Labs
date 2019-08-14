@@ -6,12 +6,17 @@ namespace Exercises.Delegate33
     {
         static void Main(string[] args)
         {
-            Func<string> functions = null;
-            functions += () => "1";
-            functions += () => "2";
-            functions += () => "3";
-            var result = functions.InvokeList();
-            Console.WriteLine(result);
+            Func<string> a = () => "a";
+            Func<string> b = () => "b";
+            Func<string> c = () => "c";
+            Func<string> d = null;
+            var logger = new Logger();
+
+            d += logger.GetWrapper(a);
+            d += logger.GetWrapper(b);
+            d += logger.GetWrapper(c);
+
+            Console.WriteLine(d());
             Console.ReadLine();
         }
     }
