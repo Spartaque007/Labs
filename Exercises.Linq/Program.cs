@@ -13,7 +13,7 @@ namespace Exercises.Linq
 
             //1) Find the words in the collection that start with the letter 'L' from fruits
             PrintHead(data.Fruits, 1);
-            var wordsWithL = data.Fruits.Where(f => f[0] == 'L').ToList();
+            var wordsWithL = data.Fruits.Where(f => f.FirstOrDefault() == 'L').ToList();
             PrintResult(wordsWithL);
 
 
@@ -32,7 +32,7 @@ namespace Exercises.Linq
 
             
             //4)How much money have we made? purchases
-            PrintHead(data.Purchases,4);
+            PrintHead(data.Purchases, 4);
             var summ = data.Purchases.Sum();
             Console.WriteLine("\nResults:\n");
             Console.WriteLine(summ);
@@ -45,7 +45,7 @@ namespace Exercises.Linq
                Ref: https://msdn.microsoft.com/en-us/library/system.math.sqrt(v=vs.110).aspx
                wheresSquaredo
             */
-            PrintHead(data.wheresSquaredo,5);
+            PrintHead(data.wheresSquaredo, 5);
             var numbersCollectoin = data.wheresSquaredo.TakeWhile(n => Math.Sqrt(n) % 1 != 0).ToList();
             PrintResult(numbersCollectoin);
 
