@@ -35,9 +35,11 @@ namespace Exrercises.Linq2
         //It’s guaranteed that array contains more than 3 numbers.
         public static T FindUniq<T>(IEnumerable<T> numbers)
         {
-            var g = numbers.GroupBy(n =>n).Select(n=>new { n.Key, n.Count()}
-                );
-            return numbers.First();
+            return  numbers
+                    .GroupBy(n => n, (number, count) => new { number, count })
+                    .Select(n => n.number)
+                    .Last();
         }
+
     }
 }
