@@ -35,9 +35,9 @@ namespace Exrercises.Linq2
         public static T FindUniq<T>(IEnumerable<T> numbers)
         {
             return numbers
-                    .GroupBy(n => n, (number, count) => new { number, count })
-                    .Select(n => n.number)
-                    .Last();
+                .GroupBy(n => n, (number, count) => new { number, count })
+                .Select(n => n.number)
+                .Last();
         }
 
         //Take an integer `n(n >= 0)` and a digit `d(0 <= d <= 9)` as an integer.Square
@@ -46,7 +46,7 @@ namespace Exrercises.Linq2
         //`d` as parameters and returning this count.
         public static int GetCountOfNumbers(int checkingNumber, int number)
         {
-            var r = GetArraayFromNumer(number)
+            var r = GetArrayFromNumber(number)
                 .Select(n => n * n)
                 .Select(n => GetCountNumberInNumbers(n, checkingNumber))
                 .Sum();
@@ -65,7 +65,7 @@ namespace Exrercises.Linq2
         }
 
 
-        private static IEnumerable<int> GetArraayFromNumer(int number)
+        private static IEnumerable<int> GetArrayFromNumber(int number)
         {
             var array = new int[number];
 
