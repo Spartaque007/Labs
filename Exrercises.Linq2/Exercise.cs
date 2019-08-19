@@ -24,7 +24,6 @@ namespace Exrercises.Linq2
         // only the final word in the resulting sequence:
         //    -> "The last word is <word>"
         // If there are no words with the character 'e' in them, then return null.
-        //   
         // TRY to do it all using only LINQ statements. No loops or if statements.
         public static string GetTheLastWord(IEnumerable<string> words)
         {
@@ -35,10 +34,57 @@ namespace Exrercises.Linq2
         //It’s guaranteed that array contains more than 3 numbers.
         public static T FindUniq<T>(IEnumerable<T> numbers)
         {
-            return  numbers
+            return numbers
                     .GroupBy(n => n, (number, count) => new { number, count })
                     .Select(n => n.number)
                     .Last();
+        }
+
+        //Take an integer `n(n >= 0)` and a digit `d(0 <= d <= 9)` as an integer.Square
+        //all numbers `k (0 <= k <= n)` between `0` and `n`. Count the numbers of digits 
+        //`d` used in the writing of all the `k**2`. Call `NbDig` the function taking `n` and 
+        //`d` as parameters and returning this count.
+        public static int GetCountOfNumbers(int checkingNumber, int number)
+        {
+
+            var r = GetArraayFromNumer(number)
+                .Select(n => n * n)
+                .Select(n => GetCountNumberInNumbers(n, checkingNumber))
+                .Sum();
+
+            return r;
+        }
+
+        private static IEnumerable<int> GetArraayFromNumer(int number)
+        {
+            var array = new int[number];
+
+            for (int i = 0; i < number; i++)
+            {
+                array[i] = (i + 1);
+            }
+            return array;
+        }
+
+        private static int GetCountNumberInNumbers(int number, int numberCheck)
+        {
+            int count = 0;
+
+            do
+            {
+                if (number / 10 == numberCheck)
+                {
+                    count++;
+                }
+                if (number % 10 == numberCheck)
+                {
+                    count++;
+                }
+                number /= 10;
+            }
+            while (number / 10 > 0);
+
+            return count;
         }
     }
 }
