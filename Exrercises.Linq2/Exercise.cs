@@ -40,17 +40,5 @@ namespace Exrercises.Linq2
                     .Select(n => n.number)
                     .Last();
         }
-
-        public static int GetCountNumberInNumbersSqr(int CheckNumber, int number )
-        {
-            var array = new int[number];
-            for (int i = 0; i < number; i++)
-            {
-                array[i] = number * number;
-            }
-
-            var g = array.Select(n=>n).
-            return 0;
-        }
     }
 }
