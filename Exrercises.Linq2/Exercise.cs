@@ -46,7 +46,6 @@ namespace Exrercises.Linq2
         //`d` as parameters and returning this count.
         public static int GetCountOfNumbers(int checkingNumber, int number)
         {
-
             var r = GetArraayFromNumer(number)
                 .Select(n => n * n)
                 .Select(n => GetCountNumberInNumbers(n, checkingNumber))
@@ -54,6 +53,17 @@ namespace Exrercises.Linq2
 
             return r;
         }
+
+        public static int GetCountOfNumbersWithYeald(int checkingNumber, int number)
+        {
+            var r = GetNumbers(number)
+                .Select(n => n * n)
+                .Select(n => GetCountNumberInNumbers(n, checkingNumber))
+                .Sum();
+
+            return r;
+        }
+
 
         private static IEnumerable<int> GetArraayFromNumer(int number)
         {
@@ -85,6 +95,14 @@ namespace Exrercises.Linq2
             while (number / 10 > 0);
 
             return count;
+        }
+
+        private static IEnumerable<int> GetNumbers(int number)
+        {
+            for (int i = 0; i < number; i++)
+            {
+                yield return i + 1;
+            }
         }
     }
 }

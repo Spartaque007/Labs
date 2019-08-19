@@ -34,6 +34,9 @@ namespace Exrercises.Linq2
             var countOfNumber = Exercise.GetCountOfNumbers(1, 11);
             Console.WriteLine(countOfNumber);
 
+            var countOfNumber2 = Exercise.GetCountOfNumbersWithYeald(1, 11);
+            Console.WriteLine(countOfNumber2);
+
             Console.ReadKey();
         }
     }
