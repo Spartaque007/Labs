@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Exercises.AsyncAwait
 {
@@ -8,6 +9,8 @@ namespace Exercises.AsyncAwait
         {
             FileReader fileReader = new FileReader(new ConsoleLogger());
             await fileReader.GetDataAsync(@"./urls.txt");
+            await fileReader.SaveUrlsToFileAsync();
+            Console.ReadKey();
         }
     }
 }
