@@ -1,4 +1,5 @@
 ﻿using Exercises.AsyncAwait.Dependences;
+using System;
 
 namespace Exercises.AsyncAwait
 {
@@ -6,8 +7,7 @@ namespace Exercises.AsyncAwait
     {
         public void Write(string logInformation)
         {
-
-            System.Console.WriteLine(logInformation);
+            Console.WriteLine(logInformation);
         }
     }
 }

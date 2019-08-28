@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Exercises.AsyncAwait
         private readonly ILogger _logger;
 
 
-        public List<string> Urls { get; set; } = new List<string>();
+        public IList<string> Urls { get; set; } = new List<string>();
 
 
         public FileReader(ILogger logger, string urlsFileName)
@@ -33,13 +34,13 @@ namespace Exercises.AsyncAwait
             {
                 try
                 {
-                    _logger.Write("started fetching <urls>");
+                    _logger.Write($"started getting URLs from file {UrlsFileName}");
 
                     foreach (string url in File.ReadLines(UrlsFileName))
                     {
                         Urls.Add(url);
                     }
-                    _logger.Write("fetched successfully");
+                    _logger.Write("Getting URls from file successfully");
                     return true;
                 }
                 catch (FileNotFoundException)
@@ -51,35 +52,61 @@ namespace Exercises.AsyncAwait
         }
 
 
-        public async Task SaveUrlsToFileAsync()
+        public async Task GetDataFromUrlOneByOneAsync()
         {
+            var urlQueue = new Queue<string>(Urls);
+
+            while (urlQueue.Count != 0)
+            {
+                try
+                {
+                    string currentUrl = urlQueue.Dequeue();
+                    var result = await GetStringFromUrlAsync(currentUrl);
+                    await SaveContentToFileAsync(currentUrl, result);
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.Write($"Request filed {ex.TargetSite.Name}");
+                }
+            }
+
+        }
+
+        public async Task SaveContentToFileAsync(string url, string content)
+        {
+
             await Task.Run(() =>
             {
                 DirectoryInfo directory = new DirectoryInfo(DefaultDir);
+
                 if (!directory.Exists)
                 {
                     _logger.Write("Directory was created");
                     directory.Create();
                 }
 
-                foreach (var url in Urls)
+
+                try
                 {
-                    try
+                    var currentFileName = Regex.Replace(url, @"[^\w\.@-]", "_");
+                    var currentPath = $@"{DefaultDir}{currentFileName}.html";
+                    using (StreamWriter sw = new StreamWriter(currentPath))
                     {
-                        var currentFileName = Regex.Replace(url, @"[^\w\.@-]", "");
-                        var currentPath = $@"{DefaultDir}{currentFileName}.txt";
-                        using (StreamWriter sw = new StreamWriter(currentPath))
-                        {
-                            sw.WriteLine(url);
-                            _logger.Write($"File \"{currentFileName}\" saved");
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Write($"Url don't saved because: \n{e.Message}");
+                        sw.WriteLine(content);
+                        _logger.Write($"File \"{url}\" saved");
                     }
                 }
+                catch (Exception e)
+                {
+                    _logger.Write($"URL don't saved because: \n{e.Message}");
+                }
             });
+        }
+
+
+        private Task<string> GetStringFromUrlAsync(string url)
+        {
+            return (new HttpClient()).GetStringAsync(url);
         }
     }
 }
