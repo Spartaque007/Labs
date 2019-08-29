@@ -54,22 +54,20 @@ namespace Exercises.AsyncAwait
 
         public async Task GetDataFromUrlOneByOneAsync()
         {
-            var urlQueue = new Queue<string>(Urls);
+            var results = new string[Urls.Count];
 
-            while (urlQueue.Count != 0)
+            for (int i = 0; i < Urls.Count; i++)
             {
                 try
                 {
-                    string currentUrl = urlQueue.Dequeue();
-                    var result = await GetStringFromUrlAsync(currentUrl);
-                    await SaveContentToFileAsync(currentUrl, result);
+                    results[i] = await GetStringFromUrlAsync(Urls[i]);
+
                 }
                 catch (HttpRequestException ex)
                 {
                     _logger.Write($"Request filed {ex.TargetSite.Name}");
                 }
             }
-
         }
 
         public async Task SaveContentToFileAsync(string url, string content)
@@ -106,7 +104,9 @@ namespace Exercises.AsyncAwait
 
         private Task<string> GetStringFromUrlAsync(string url)
         {
-            return (new HttpClient()).GetStringAsync(url);
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
+            return (client).GetStringAsync(url);
         }
     }
 }

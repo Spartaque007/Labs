@@ -17,7 +17,7 @@ namespace Exercises.AsyncAwait
             Console.WriteLine("\nAll done\npress ENTER for exit");
 
             
-            Console.ReadKey();
+            Console.ReadLine();
         }
     }
 }
