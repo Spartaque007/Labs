@@ -11,7 +11,7 @@ namespace Exercises.AsyncAwait
 
             if( await fileReader.GetUrlsFromLocalFileAsync(@"./urls.txt"))
             {
-                fileReader.GetDataFromUrlOneByOneAsync();
+                fileReader.GetDataFromUrlParallel(3);
             }
             await fileReader.SaveAllPagesToFile();
             Console.WriteLine("\nAll done\npress ENTER for exit");

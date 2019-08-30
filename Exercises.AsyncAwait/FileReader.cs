@@ -53,7 +53,7 @@ namespace Exercises.AsyncAwait
                 {
                     _logger.Write("File not found");
                 }
-                catch(ArgumentException)
+                catch (ArgumentException)
                 {
                     _logger.Write("Path is a zero-length string");
                 }
@@ -61,25 +61,57 @@ namespace Exercises.AsyncAwait
                 {
                     _logger.Write("You don't have the required permission");
                 }
-                
+
                 return false;
             });
         }
-
 
         public async void GetDataFromUrlOneByOneAsync()
         {
             for (int i = 0; i < results.Count; i++)
             {
                 var currentKeyValuePair = results.ElementAt(i);
-                try
+                results[currentKeyValuePair.Key] = await GetStringFromUrlAsync(currentKeyValuePair.Key);
+            }
+        }
+
+        public async void GetDataFromUrlParallel(int countDownloads)
+        {
+            if (countDownloads <= 0)
+            {
+                throw new ArgumentException("СountDownloads must be greater than zero");
+            }
+            else
+            {
+                var queueOfDownloads = new Queue<KeyValuePair<string, string>>(results);
+
+                while (queueOfDownloads.Count != 0)
                 {
-                    results[currentKeyValuePair.Key] = await GetStringFromUrlAsync(currentKeyValuePair.Key);
-                }
-                catch (HttpRequestException ex)
-                {
-                    _logger.Write($"Request filed {ex.TargetSite.Name}");
-                    
+                    int countOfTasks = 0;
+                    if (queueOfDownloads.Count >= countDownloads)
+                    {
+                        countOfTasks = countDownloads;
+                    }
+                    else
+                    {
+                        countOfTasks = queueOfDownloads.Count;
+                    }
+                    var tasksArray = new Task<string>[countOfTasks];
+                    var urlsArray = new string[countOfTasks];
+
+                    for (int i = 0; i < countOfTasks; i++)
+                    {
+
+                        var currentDownloadUrl = (queueOfDownloads.Dequeue()).Key;
+                        urlsArray[i] = currentDownloadUrl;
+                        tasksArray[i] = GetContentFromUrl(currentDownloadUrl);
+                    }
+
+                    Task.WaitAll(tasksArray);
+                    for (int i = 0; i < countOfTasks; i++)
+                    {
+                        results[urlsArray[i]] = await tasksArray[i];
+                    }
                 }
             }
         }
@@ -130,13 +162,25 @@ namespace Exercises.AsyncAwait
             });
         }
 
-
         private Task<string> GetStringFromUrlAsync(string url)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent",
                 "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
             return (client).GetStringAsync(url);
+        }
+
+        private Task<string> GetContentFromUrl(string url)
+        {
+            try
+            {
+                return GetStringFromUrlAsync(url);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.Write($"Request filed {ex.TargetSite.Name}");
+            }
+            return null;
         }
     }
 }
