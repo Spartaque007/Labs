@@ -9,16 +9,12 @@ namespace Exercises.AsyncAwait
         {
             FileReader fileReader = new FileReader(new ConsoleLogger(), "urls");
 
-            if( await fileReader.GetDataAsync(@"./urls.txt"))
+            if( await fileReader.GetUrlsFromLocalFileAsync(@"./urls.txt"))
             {
-                //fileReader.GetDataFromUrlOneByOneAsync();
+                fileReader.GetDataFromUrlOneByOneAsync();
             }
-            await fileReader.GetDataFromUrlOneByOneAsync();
-
             await fileReader.SaveAllPagesToFile();
             Console.WriteLine("\nAll done\npress ENTER for exit");
-
-            
             Console.ReadLine();
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace Exercises.AsyncAwait
         }
 
 
-        public async Task<bool> GetDataAsync(string pathToFileWithUrls)
+        public async Task<bool> GetUrlsFromLocalFileAsync(string pathToFileWithUrls)
         {
             _logger.Write("Start reading file");
 
@@ -52,13 +53,21 @@ namespace Exercises.AsyncAwait
                 {
                     _logger.Write("File not found");
                 }
-
+                catch(ArgumentException)
+                {
+                    _logger.Write("Path is a zero-length string");
+                }
+                catch (SecurityException)
+                {
+                    _logger.Write("You don't have the required permission");
+                }
+                
                 return false;
             });
         }
 
 
-        public async Task GetDataFromUrlOneByOneAsync()
+        public async void GetDataFromUrlOneByOneAsync()
         {
             for (int i = 0; i < results.Count; i++)
             {
@@ -70,6 +79,7 @@ namespace Exercises.AsyncAwait
                 catch (HttpRequestException ex)
                 {
                     _logger.Write($"Request filed {ex.TargetSite.Name}");
+                    
                 }
             }
         }
@@ -87,12 +97,20 @@ namespace Exercises.AsyncAwait
         {
             await Task.Run(() =>
             {
-                DirectoryInfo directory = new DirectoryInfo(DefaultDir);
+                var directory = new DirectoryInfo(DefaultDir);
 
                 if (!directory.Exists)
                 {
+                    try
+                    {
+                        directory.Create();
+                    }
+                    catch (IOException)
+                    {
+                        _logger.Write("Directory can't created");
+                    }
+
                     _logger.Write("Directory was created");
-                    directory.Create();
                 }
 
                 try
