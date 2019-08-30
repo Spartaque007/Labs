@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,9 +13,11 @@ namespace Exercises.AsyncAwait
     {
         private const string DefaultDir = @"./urls/";
 
-        private readonly string UrlsFileName;
+        private readonly string _urlsFileName;
 
         private readonly ILogger _logger;
+
+        private Dictionary<string, string> results = new Dictionary<string, string>();
 
 
         public IList<string> Urls { get; set; } = new List<string>();
@@ -23,30 +26,33 @@ namespace Exercises.AsyncAwait
         public FileReader(ILogger logger, string urlsFileName)
         {
             _logger = logger;
-            UrlsFileName = $"./{urlsFileName}.txt";
+            _urlsFileName = $"./{urlsFileName}.txt";
         }
 
 
         public async Task<bool> GetDataAsync(string pathToFileWithUrls)
         {
             _logger.Write("Start reading file");
+
             return await Task.Run(() =>
             {
                 try
                 {
-                    _logger.Write($"started getting URLs from file {UrlsFileName}");
+                    _logger.Write($"started getting URLs from file {_urlsFileName}");
 
-                    foreach (string url in File.ReadLines(UrlsFileName))
+                    foreach (string url in File.ReadLines(_urlsFileName))
                     {
-                        Urls.Add(url);
+                        results[url] = null;
                     }
                     _logger.Write("Getting URls from file successfully");
+
                     return true;
                 }
                 catch (FileNotFoundException)
                 {
                     _logger.Write("File not found");
                 }
+
                 return false;
             });
         }
@@ -54,14 +60,12 @@ namespace Exercises.AsyncAwait
 
         public async Task GetDataFromUrlOneByOneAsync()
         {
-            var results = new string[Urls.Count];
-
-            for (int i = 0; i < Urls.Count; i++)
+            for (int i = 0; i < results.Count; i++)
             {
+                var currentKeyValuePair = results.ElementAt(i);
                 try
                 {
-                    results[i] = await GetStringFromUrlAsync(Urls[i]);
-
+                    results[currentKeyValuePair.Key] = await GetStringFromUrlAsync(currentKeyValuePair.Key);
                 }
                 catch (HttpRequestException ex)
                 {
@@ -70,9 +74,17 @@ namespace Exercises.AsyncAwait
             }
         }
 
-        public async Task SaveContentToFileAsync(string url, string content)
+        public async Task SaveAllPagesToFile()
         {
+            foreach (var result in results)
+            {
+                await SaveContentToFileAsync(result.Key, result.Value);
+            }
+        }
 
+
+        private async Task SaveContentToFileAsync(string url, string content)
+        {
             await Task.Run(() =>
             {
                 DirectoryInfo directory = new DirectoryInfo(DefaultDir);
@@ -82,7 +94,6 @@ namespace Exercises.AsyncAwait
                     _logger.Write("Directory was created");
                     directory.Create();
                 }
-
 
                 try
                 {
@@ -105,7 +116,8 @@ namespace Exercises.AsyncAwait
         private Task<string> GetStringFromUrlAsync(string url)
         {
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
+            client.DefaultRequestHeaders.Add("User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
             return (client).GetStringAsync(url);
         }
     }
