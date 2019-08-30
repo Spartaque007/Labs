@@ -75,7 +75,7 @@ namespace Exercises.AsyncAwait
             }
         }
 
-        public async void GetDataFromUrlParallel(int countDownloads)
+        public async void GetDataFromUrlParallelAsync(int countDownloads)
         {
             if (countDownloads <= 0)
             {
@@ -101,7 +101,6 @@ namespace Exercises.AsyncAwait
 
                     for (int i = 0; i < countOfTasks; i++)
                     {
-
                         var currentDownloadUrl = (queueOfDownloads.Dequeue()).Key;
                         urlsArray[i] = currentDownloadUrl;
                         tasksArray[i] = GetContentFromUrl(currentDownloadUrl);
