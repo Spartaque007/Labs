@@ -47,6 +47,7 @@
     <Compile Include="ConsoleLoadingAnimations.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="Dependences\ILogger.cs" />
+    <Compile Include="Dependences\IStatus.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

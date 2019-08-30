@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Exercises.AsyncAwait.Dependences;
+using System;
 
 namespace Exercises.AsyncAwait
 {
-    public class ConsoleLoadingAnimations
+    public class ConsoleLoadingAnimations : IStatus
     {
         private const string PatternString = "          ]";
         private const char StatusSymbol = '#';
 
         private readonly int _positionTopStart;
         private readonly int _positionLeftStart;
+        private readonly string _startText;
 
         private int _currentPercent = 0;
         private int _currentSymbolsCount = 0;
@@ -21,14 +23,13 @@ namespace Exercises.AsyncAwait
             {
                 Console.WriteLine();
             }
-            var startText = text + " [";
-            _positionLeftStart = Console.CursorLeft + startText.Length;
+            _startText = text + " [";
+            _positionLeftStart = Console.CursorLeft + _startText.Length;
             _positionTopStart = Console.CursorTop;
-            Console.Write(startText);
-            Console.Write(PatternString + $"{_currentPercent} % ");
             _currentSymbolPosition = _positionLeftStart;
+            Console.Write(_startText);
+            Console.Write(PatternString + $"{_currentPercent} % \n");
         }
-
 
         public void Update(int incPercent)
         {
@@ -42,7 +43,7 @@ namespace Exercises.AsyncAwait
 
             if (_currentPercent > 100)
             {
-                throw new ArgumentException("total percent>100");
+                _currentPercent = 100;
             }
 
             var statusSymbolsDelta = (_currentPercent / 10) - _currentSymbolsCount;

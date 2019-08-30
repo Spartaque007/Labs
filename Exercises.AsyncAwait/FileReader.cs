@@ -18,16 +18,19 @@ namespace Exercises.AsyncAwait
 
         private readonly ILogger _logger;
 
+        private readonly IStatus _statusLine;
+
         private Dictionary<string, string> results = new Dictionary<string, string>();
 
 
         public IList<string> Urls { get; set; } = new List<string>();
 
 
-        public FileReader(ILogger logger, string urlsFileName)
+        public FileReader(ILogger logger, IStatus statusLine, string urlsFileName)
         {
             _logger = logger;
             _urlsFileName = $"./{urlsFileName}.txt";
+            _statusLine = statusLine;
         }
 
 
@@ -68,15 +71,18 @@ namespace Exercises.AsyncAwait
 
         public async void GetDataFromUrlOneByOneAsync()
         {
+            int quantumPercent = 100/results.Count;
             for (int i = 0; i < results.Count; i++)
             {
                 var currentKeyValuePair = results.ElementAt(i);
                 results[currentKeyValuePair.Key] = await GetStringFromUrlAsync(currentKeyValuePair.Key);
+                _statusLine.Update(quantumPercent);
             }
         }
 
         public async void GetDataFromUrlParallelAsync(int countDownloads)
         {
+            int quantumPercent = 100 / results.Count;
             if (countDownloads <= 0)
             {
                 throw new ArgumentException("СountDownloads must be greater than zero");
@@ -110,6 +116,7 @@ namespace Exercises.AsyncAwait
                     for (int i = 0; i < countOfTasks; i++)
                     {
                         results[urlsArray[i]] = await tasksArray[i];
+                        _statusLine.Update(quantumPercent);
                     }
                 }
             }
