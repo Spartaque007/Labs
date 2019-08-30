@@ -109,7 +109,7 @@ namespace Exercises.AsyncAwait
                     {
                         var currentDownloadUrl = (queueOfDownloads.Dequeue()).Key;
                         urlsArray[i] = currentDownloadUrl;
-                        tasksArray[i] = GetContentFromUrl(currentDownloadUrl);
+                        tasksArray[i] = GetContentFromUrlAsync(currentDownloadUrl);
                     }
 
                     Task.WaitAll(tasksArray);
@@ -176,11 +176,11 @@ namespace Exercises.AsyncAwait
             return (client).GetStringAsync(url);
         }
 
-        private Task<string> GetContentFromUrl(string url)
+        private async Task<string> GetContentFromUrlAsync(string url)
         {
             try
             {
-                return GetStringFromUrlAsync(url);
+                return await GetStringFromUrlAsync(url);
             }
             catch (HttpRequestException ex)
             {
