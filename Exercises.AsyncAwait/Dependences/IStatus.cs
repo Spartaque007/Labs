@@ -2,6 +2,6 @@
 {
     public interface IStatus
     {
-        void Update(int count);
+        void Update(decimal count);
     }
 }

@@ -11,17 +11,12 @@ namespace Exercises.AsyncAwait
 
             if (await fileReader.GetUrlsFromLocalFileAsync(@"./urls.txt"))
             {
-
                 fileReader.GetDataFromUrlParallelAsync(3);
             }
             await fileReader.SaveAllPagesToFile();
             Console.WriteLine("\nAll done\npress ENTER for exit");
             Console.ReadLine();
-
-
             Console.ReadKey();
-
-
         }
     }
 }

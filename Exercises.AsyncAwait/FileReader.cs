@@ -71,7 +71,7 @@ namespace Exercises.AsyncAwait
 
         public async void GetDataFromUrlOneByOneAsync()
         {
-            int quantumPercent = 100/results.Count;
+            decimal quantumPercent = (decimal)100/results.Count;
             for (int i = 0; i < results.Count; i++)
             {
                 var currentKeyValuePair = results.ElementAt(i);
@@ -82,7 +82,7 @@ namespace Exercises.AsyncAwait
 
         public async void GetDataFromUrlParallelAsync(int countDownloads)
         {
-            int quantumPercent = 100 / results.Count;
+            decimal quantumPercent = (decimal)100 / results.Count;
             if (countDownloads <= 0)
             {
                 throw new ArgumentException("СountDownloads must be greater than zero");

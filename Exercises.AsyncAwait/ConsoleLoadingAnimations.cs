@@ -12,7 +12,7 @@ namespace Exercises.AsyncAwait
         private readonly int _positionLeftStart;
         private readonly string _startText;
 
-        private int _currentPercent = 0;
+        private decimal _currentPercent = 0;
         private int _currentSymbolsCount = 0;
         private int _currentSymbolPosition;
 
@@ -31,7 +31,7 @@ namespace Exercises.AsyncAwait
             Console.Write(PatternString + $"{_currentPercent} % \n");
         }
 
-        public void Update(int incPercent)
+        public void Update(decimal incPercent)
         {
 
             if (incPercent < 0)
@@ -55,7 +55,7 @@ namespace Exercises.AsyncAwait
         }
 
 
-        private void PrintSymbols(int count)
+        private void PrintSymbols(decimal count)
         {
             int _positionTopPrev = Console.CursorTop;
             int _positionLeftPrev = Console.CursorLeft;
@@ -73,7 +73,7 @@ namespace Exercises.AsyncAwait
             }
 
             Console.CursorLeft = _currentSymbolPosition + PatternString.Length;
-            Console.Write($"{_currentPercent} %");
+            Console.Write($"{(int)_currentPercent} %");
             Console.CursorTop = _positionTopPrev;
             Console.CursorLeft = _positionLeftPrev;
             Console.CursorVisible = true;
