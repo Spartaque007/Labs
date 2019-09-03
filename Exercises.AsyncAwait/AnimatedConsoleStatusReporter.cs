@@ -3,7 +3,7 @@ using System;
 
 namespace Exercises.AsyncAwait
 {
-    public class ConsoleLoadingAnimations : IStatus
+    public class AnimatedConsoleStatusReporter : IStatusReporter
     {
         private const string PatternString = "          ]";
         private const char StatusSymbol = '#';
@@ -17,7 +17,7 @@ namespace Exercises.AsyncAwait
         private int _currentSymbolPosition;
 
 
-        public ConsoleLoadingAnimations(string text)
+        public AnimatedConsoleStatusReporter(string text)
         {
             if (!(Console.CursorLeft == 0))
             {

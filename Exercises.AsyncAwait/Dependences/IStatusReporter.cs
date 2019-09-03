@@ -1,6 +1,6 @@
 ﻿namespace Exercises.AsyncAwait.Dependences
 {
-    public interface IStatus
+    public interface IStatusReporter
     {
         void Update(decimal count);
     }
