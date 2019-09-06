@@ -46,9 +46,11 @@
   <ItemGroup>
     <Compile Include="AnimatedConsoleStatusReporter.cs" />
     <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="ConsoleWithLocker.cs" />
     <Compile Include="Dependences\ILogger.cs" />
     <Compile Include="Dependences\IStatusReporter.cs" />
     <Compile Include="Dependences\IStorage.cs" />
+    <Compile Include="StatusLineEventArgs.cs" />
     <Compile Include="UrlSaver.cs" />
     <Compile Include="LocalFileStorage.cs" />
     <Compile Include="Program.cs" />

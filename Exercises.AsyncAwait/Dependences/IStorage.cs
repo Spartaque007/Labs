@@ -7,6 +7,6 @@ namespace Exercises.AsyncAwait.Dependences
     {
         Task<IDictionary<string, string>> GetUrlsFromStorageAsync();
 
-        Task SaveContentToStorage(string url, string content);
+        Task SaveContentToStorageAsync(string url, string content);
     }
 }

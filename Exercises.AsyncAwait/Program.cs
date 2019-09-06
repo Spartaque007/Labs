@@ -1,20 +1,41 @@
-﻿using Exercises.AsyncAwait.Dependences;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Exercises.AsyncAwait
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        static async Task Main()
         {
+            var a = 0;
+            while (a != 100)
+            {
+                Console.Clear();
+                ConsoleWithLocker.Clear();
+                await Foo();
+                Console.WriteLine("Press N for exit or any button to repeat downloads and press ENTER");
+                a = Console.Read();
+            }
+        }
 
+        private static async Task Foo()
+        {
+            var logger = new ConsoleLogger();
+            var storage = new LocalFileStorage(logger, @".\urls\", "urls");
+            var urlSaver = new UrlSaver(storage, logger);
+            var statusLine = new AnimatedConsoleStatusReporter("Loading progress: ");
 
+            urlSaver.UpdateStatusLine += ((s, e) =>
+            {
+                statusLine.Update(e.Delta);
+            });
 
-
-            Console.WriteLine("\nAll done\npress ENTER for exit");
-            Console.ReadLine();
-            Console.ReadKey();
+            if (await urlSaver.TryGetGetUrlsFromStorageAsync())
+            {
+                await urlSaver.GetDataFromUrlAsync(5);
+                await urlSaver.SaveContentToStorageAsync();
+                ConsoleWithLocker.WriteLine("************** ALL DONE**************");
+            }
         }
     }
 }

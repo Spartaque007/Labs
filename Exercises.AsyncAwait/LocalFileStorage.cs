@@ -15,16 +15,12 @@ namespace Exercises.AsyncAwait
 
         private readonly ILogger _logger;
 
-        private IDictionary<string, string> _results;
-
-
 
         public LocalFileStorage(ILogger logger, string defaultDir, string urlsFileName)
         {
             _defaultDir = defaultDir;
             _logger = logger;
             _urlsFileName = $"./{urlsFileName}.txt";
-            _results = new Dictionary<string, string>();
         }
 
 
@@ -38,7 +34,7 @@ namespace Exercises.AsyncAwait
                 textFromFile = await reader.ReadToEndAsync();
             }
 
-            var urlsArray = textFromFile.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var urlsArray = textFromFile.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var url in urlsArray)
             {
@@ -49,7 +45,7 @@ namespace Exercises.AsyncAwait
         }
 
 
-        public async Task SaveContentToStorage(string url, string content)
+        public async Task SaveContentToStorageAsync(string url, string content)
         {
             await Task.Run(() =>
             {
