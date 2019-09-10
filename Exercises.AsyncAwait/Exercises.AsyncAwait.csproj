@@ -51,6 +51,7 @@
     <Compile Include="Dependences\ILogger.cs" />
     <Compile Include="Dependences\IStatusReporter.cs" />
     <Compile Include="Dependences\IStorage.cs" />
+    <Compile Include="EventsExtensions.cs" />
     <Compile Include="StatusLineEventArgs.cs" />
     <Compile Include="UrlSaver.cs" />
     <Compile Include="LocalFileStorage.cs" />

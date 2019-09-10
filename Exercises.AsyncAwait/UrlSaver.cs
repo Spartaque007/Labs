@@ -1,5 +1,6 @@
-﻿using System;
+﻿using Common.Extensions;
 using Exercises.AsyncAwait.Dependences;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -93,10 +94,10 @@ namespace Exercises.AsyncAwait
             _logger.Write("Start new download");
             _urls[url] = await GetPage(url);
             _logger.Write($"Download finished. {_queue.Count} downloads in queue ");
-            UpdateStatusLine?.Invoke(this, new StatusLineEventArgs(_quantumOfStatusLine));
+            UpdateStatusLine.Raise(this, new StatusLineEventArgs(_quantumOfStatusLine));
         }
 
-        private async Task<string> GetPage(string url)
+        private static async Task<string> GetPage(string url)
         {
             using (var client = new HttpClient())
             {
