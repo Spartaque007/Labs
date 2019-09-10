@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Common.Extensions
+namespace Exercises.AsyncAwait
 {
     public static class EventsExtensions
     {

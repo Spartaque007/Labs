@@ -5,16 +5,17 @@ namespace Exercises.AsyncAwait
 {
     internal static class Program
     {
-        static async Task Main()
+        private static async Task Main()
         {
             var a = 0;
-            while (a != 100)
+            while (a != 110)
             {
                 Console.Clear();
                 ConsoleWithLocker.Clear();
                 await Foo();
                 Console.WriteLine("Press N for exit or any button to repeat downloads and press ENTER");
                 a = ConsoleWithLocker.Read();
+                Console.WriteLine(a);
             }
         }
 

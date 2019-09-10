@@ -1,5 +1,4 @@
-﻿using Common.Extensions;
-using Exercises.AsyncAwait.Dependences;
+﻿using Exercises.AsyncAwait.Dependences;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
