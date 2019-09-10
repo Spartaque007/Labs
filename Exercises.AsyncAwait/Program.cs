@@ -14,7 +14,7 @@ namespace Exercises.AsyncAwait
                 ConsoleWithLocker.Clear();
                 await Foo();
                 Console.WriteLine("Press N for exit or any button to repeat downloads and press ENTER");
-                a = Console.Read();
+                a = ConsoleWithLocker.Read();
             }
         }
 

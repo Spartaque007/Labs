@@ -10,12 +10,14 @@ namespace Exercises.AsyncAwait
     {
         private readonly IStorage _storage;
         private readonly ILogger _logger;
+
         private readonly TaskCompletionSource<int> _taskCompletionSource;
         private readonly Queue<string> _queue;
 
         private IDictionary<string, string> _urls;
         private decimal _quantumOfStatusLine;
         private int _workingTasks;
+
 
         public event EventHandler<StatusLineEventArgs> UpdateStatusLine;
 
@@ -48,9 +50,7 @@ namespace Exercises.AsyncAwait
             _quantumOfStatusLine = 100m / _queue.Count;
             _logger.Write($"In queue {_queue.Count} downloads");
 
-            var tasksInTimeQuantity = downloadsQuantity >= _urls.Count
-                ? _urls.Count
-                : downloadsQuantity;
+            var tasksInTimeQuantity = Math.Min(_urls.Count, downloadsQuantity);
 
             for (int i = 0; i < tasksInTimeQuantity; i++)
             {
@@ -60,6 +60,15 @@ namespace Exercises.AsyncAwait
 
             return await t;
         }
+
+        public async Task SaveContentToStorageAsync()
+        {
+            foreach (var url in _urls)
+            {
+                await _storage.SaveContentToStorageAsync(url.Key, url.Value);
+            }
+        }
+
 
         private void TaskRun()
         {
@@ -78,15 +87,6 @@ namespace Exercises.AsyncAwait
                 }
             });
         }
-
-        public async Task SaveContentToStorageAsync()
-        {
-            foreach (var url in _urls)
-            {
-                await _storage.SaveContentToStorageAsync(url.Key, url.Value);
-            }
-        }
-
 
         private async Task GetContentFromUrlAsync(string url)
         {

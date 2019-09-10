@@ -7,45 +7,6 @@ namespace Exercises.AsyncAwait
         private static readonly object Locker;
 
 
-        public static bool CursorVisible
-        {
-            get
-            {
-               return LockFuncAndRun(()=>Console.CursorVisible);
-            }
-            set
-            {
-                LockActionAndRun(() => Console.CursorVisible = value);
-            }
-        }
-
-        public static int CursorLeft
-        {
-            get
-            {
-                return LockFuncAndRun(() => Console.CursorLeft);
-            }
-
-            set
-            {
-                LockActionAndRun(() => Console.CursorLeft = value);
-            }
-        }
-
-        public static int CursorTop
-        {
-            get
-            {
-                return LockFuncAndRun(() => Console.CursorTop);
-            }
-
-            set
-            {
-                LockActionAndRun(() => Console.CursorTop = value);
-            }
-        }
-
-
         static ConsoleWithLocker()
         {
             Locker = new Object();
@@ -57,6 +18,64 @@ namespace Exercises.AsyncAwait
             LockActionAndRun(() => Console.Write(s));
         }
 
+        public static void Write<T>(T s, ConsoleCursorPosition position)
+        {
+            LockActionAndRun(() =>
+            {
+                var prevPos = new ConsoleCursorPosition
+                {
+                    Left = Console.CursorLeft,
+                    Top = Console.CursorTop,
+                    Visible = Console.CursorVisible
+                };
+
+                MoveCursor(position);
+                Console.Write(s);
+                MoveCursor(prevPos);
+            });
+        }
+
+        public static void SetCursorPosition(int top, int left, bool visible)
+        {
+            LockActionAndRun(() =>
+            {
+                var cursorPosition = new ConsoleCursorPosition
+                {
+                    Left = left,
+                    Top = top,
+                    Visible = visible
+                };
+                MoveCursor(cursorPosition);
+            });
+        }
+
+        public static void SetCursorPosition(ConsoleCursorPosition position)
+        {
+            LockActionAndRun(() =>
+            {
+                var cursorPosition = new ConsoleCursorPosition
+                {
+                    Left = position.Left,
+                    Top = position.Top,
+                    Visible = position.Visible
+                };
+                MoveCursor(cursorPosition);
+            });
+        }
+
+        public static ConsoleCursorPosition GetCurrentCursorPosition()
+        {
+            return LockFuncAndRun(() =>
+            {
+                var position = new ConsoleCursorPosition
+                {
+                    Top = Console.CursorTop,
+                    Left = Console.CursorLeft,
+                    Visible = Console.CursorVisible
+                };
+                return position;
+            });
+        }
 
         public static void WriteLine<T>(T s)
         {
@@ -70,23 +89,38 @@ namespace Exercises.AsyncAwait
 
         public static string ReadLine()
         {
-            return Console.ReadLine();
+            return LockFuncAndRun(Console.ReadLine);
+        }
+
+        public static int Read()
+        {
+            return LockFuncAndRun(Console.Read);
         }
 
         public static void Clear()
         {
-            CursorLeft = 0;
-            CursorTop = 0;
-            CursorVisible = true;
-            Console.Clear();
+            LockActionAndRun(() =>
+            {
+                Console.CursorTop = 0;
+                Console.CursorLeft = 0;
+                Console.CursorVisible = true;
+                Console.Clear();
+            });
         }
 
+
+        private static void MoveCursor(ConsoleCursorPosition position)
+        {
+            Console.CursorTop = position.Top;
+            Console.CursorLeft = position.Left;
+            Console.CursorVisible = position.Visible;
+        }
 
         private static void LockActionAndRun(Action op)
         {
             lock (Locker)
             {
-                op.Invoke();
+                op();
             }
         }
 
@@ -94,7 +128,7 @@ namespace Exercises.AsyncAwait
         {
             lock (Locker)
             {
-               return func.Invoke();
+                return func();
             }
         }
     }

@@ -10,22 +10,23 @@ namespace Exercises.AsyncAwait
 
         private readonly int _positionTopStart;
         private readonly int _positionLeftStart;
-        private readonly int _currentSymbolsCount;
-        private readonly int _currentSymbolPosition;
 
+        private int _currentSymbolsCount;
+        private int _currentSymbolPosition;
         private decimal _currentPercent;
 
 
         public AnimatedConsoleStatusReporter(string text)
         {
-            if (ConsoleWithLocker.CursorLeft != 0)
+            var currentPosition = ConsoleWithLocker.GetCurrentCursorPosition();
+            if (currentPosition.Left != 0)
             {
                 ConsoleWithLocker.WriteLine();
             }
             var startText = text + " [";
-            _positionLeftStart = ConsoleWithLocker.CursorLeft + startText.Length;
-            _positionTopStart = ConsoleWithLocker.CursorTop;
-            _currentSymbolPosition = _positionLeftStart;
+            _positionLeftStart = currentPosition.Left + startText.Length;
+            _positionTopStart = currentPosition.Top;
+            _currentSymbolPosition = 0;
             ConsoleWithLocker.Write(startText);
             ConsoleWithLocker.Write(PatternString + $"{_currentPercent} % \n");
             _currentPercent = 0;
@@ -46,7 +47,7 @@ namespace Exercises.AsyncAwait
                 _currentPercent = 100;
             }
 
-            var statusSymbolsDelta = (_currentPercent / 10) - _currentSymbolsCount;
+            var statusSymbolsDelta = (int)((_currentPercent / 10) - _currentSymbolsCount);
 
             if (statusSymbolsDelta > 0)
             {
@@ -55,28 +56,28 @@ namespace Exercises.AsyncAwait
         }
 
 
-        private void PrintSymbols(decimal count)
+        private void PrintSymbols(int count)
         {
-            var positionTopPrev = ConsoleWithLocker.CursorTop;
-            var positionLeftPrev = ConsoleWithLocker.CursorLeft;
-            ConsoleWithLocker.CursorVisible = false;
-            ConsoleWithLocker.CursorLeft = _currentSymbolPosition;
-            ConsoleWithLocker.CursorTop = _positionTopStart;
-
             for (int i = 0; i < count; i++)
             {
-                ConsoleWithLocker.Write(StatusSymbol);
-                if (ConsoleWithLocker.CursorLeft == _positionLeftStart + PatternString.Length - 1)
-                {
-                    break;
-                }
-            }
 
-            ConsoleWithLocker.CursorLeft = _currentSymbolPosition + PatternString.Length;
-            ConsoleWithLocker.Write($"{(int)_currentPercent} %");
-            ConsoleWithLocker.CursorTop = positionTopPrev;
-            ConsoleWithLocker.CursorLeft = positionLeftPrev;
-            ConsoleWithLocker.CursorVisible = true;
+                var position = new ConsoleCursorPosition
+                {
+                    Top = _positionTopStart,
+                    Left = _positionLeftStart + _currentSymbolPosition,
+                    Visible = false
+                };
+
+                if (_currentSymbolPosition < 10)
+                {
+                    ConsoleWithLocker.Write(StatusSymbol, position);
+                    _currentSymbolPosition++;
+                    _currentSymbolsCount++;
+                }
+
+                position.Left = _positionLeftStart + PatternString.Length;
+                ConsoleWithLocker.Write((int)_currentPercent + " %", position);
+            }
         }
     }
 }

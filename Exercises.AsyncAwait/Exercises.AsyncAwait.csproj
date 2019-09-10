@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedConsoleStatusReporter.cs" />
+    <Compile Include="ConsoleCursorPosition.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ConsoleWithLocker.cs" />
     <Compile Include="Dependences\ILogger.cs" />
