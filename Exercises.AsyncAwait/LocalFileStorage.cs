@@ -67,12 +67,19 @@ namespace Exercises.AsyncAwait
 
                 try
                 {
-                    var currentFileName = Regex.Replace(url, @"[^\w\.@-]", "_");
-                    var currentPath = $@"{_defaultDir}{currentFileName}.html";
-                    using (StreamWriter sw = new StreamWriter(currentPath))
+                    if (content != null)
                     {
-                        sw.WriteLine(content);
-                        _logger.Write($"File \"{url}\" saved");
+                        var currentFileName = Regex.Replace(url, @"[^\w\.@-]", "_");
+                        var currentPath = $@"{_defaultDir}{currentFileName}.html";
+                        using (StreamWriter sw = new StreamWriter(currentPath))
+                        {
+                            sw.WriteLine(content);
+                            _logger.Write($"File \"{url}\" saved");
+                        }
+                    }
+                    else
+                    {
+                        _logger.Write($"File \"{url}\" don't saved");
                     }
                 }
                 catch (Exception e)

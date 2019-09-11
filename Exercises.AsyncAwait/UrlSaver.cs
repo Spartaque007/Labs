@@ -91,18 +91,31 @@ namespace Exercises.AsyncAwait
         private async Task GetContentFromUrlAsync(string url)
         {
             _logger.Write("Start new download");
-            _urls[url] = await GetPage(url);
-            _logger.Write($"Download finished. {_queue.Count} downloads in queue ");
+            var response = await GetPage(url);
+            string downloadStatus;
+
+            if (response.IsSuccessStatusCode)
+            {
+                downloadStatus = "successful";
+                _urls[url] = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                downloadStatus = $"with fault (status code {response.StatusCode})";
+            }
+            
+            _logger.Write($"Download finished {downloadStatus}. {_queue.Count} downloads in queue ");
             UpdateStatusLine.Raise(this, new StatusLineEventArgs(_quantumOfStatusLine));
         }
 
-        private static async Task<string> GetPage(string url)
+        private static async Task<HttpResponseMessage> GetPage(string url)
         {
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("User-Agent",
                     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
-                return await client.GetStringAsync(url);
+                var a = await client.GetAsync(url);
+                return a;
             }
         }
     }
