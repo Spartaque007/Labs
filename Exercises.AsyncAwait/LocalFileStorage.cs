@@ -79,7 +79,7 @@ namespace Exercises.AsyncAwait
                     }
                     else
                     {
-                        _logger.Write($"File \"{url}\" don't saved");
+                        _logger.WriteRedText($"File \"{url}\" don't saved");
                     }
                 }
                 catch (Exception e)

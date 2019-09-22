@@ -53,6 +53,7 @@
     <Compile Include="Dependences\IStorage.cs" />
     <Compile Include="EventsExtensions.cs" />
     <Compile Include="StatusLineEventArgs.cs" />
+    <Compile Include="TaskExtensions.cs" />
     <Compile Include="UrlSaver.cs" />
     <Compile Include="LocalFileStorage.cs" />
     <Compile Include="Program.cs" />

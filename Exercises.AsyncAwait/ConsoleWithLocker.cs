@@ -81,6 +81,16 @@ namespace Exercises.AsyncAwait
         {
             LockActionAndRun(() => Console.WriteLine(s));
         }
+        public static void WriteException<T>(T s)
+        {
+            LockActionAndRun(() =>
+            {
+                var consoleColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(s);
+                Console.ForegroundColor = consoleColor;
+            });
+        }
 
         public static void WriteLine()
         {

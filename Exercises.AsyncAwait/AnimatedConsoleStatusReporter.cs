@@ -15,6 +15,8 @@ namespace Exercises.AsyncAwait
         private int _currentSymbolPosition;
         private decimal _currentPercent;
 
+        public int CurrentStatus { get => (int)_currentPercent; }
+
 
         public AnimatedConsoleStatusReporter(string text)
         {
@@ -42,7 +44,7 @@ namespace Exercises.AsyncAwait
 
             _currentPercent += incPercent;
 
-            if (_currentPercent > 100)
+            if (_currentPercent > 99)
             {
                 _currentPercent = 100;
             }

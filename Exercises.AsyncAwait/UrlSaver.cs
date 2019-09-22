@@ -1,5 +1,6 @@
 ﻿using Exercises.AsyncAwait.Dependences;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,12 +13,13 @@ namespace Exercises.AsyncAwait
         private readonly ILogger _logger;
 
         private readonly TaskCompletionSource<int> _taskCompletionSource;
-        private readonly Queue<string> _queue;
+        private readonly ConcurrentQueue<string> _queue;
 
         private IDictionary<string, string> _urls;
         private decimal _quantumOfStatusLine;
         private int _workingTasks;
-
+        private object locker = new Object();
+        private int counter = 0;
 
         public event EventHandler<StatusLineEventArgs> UpdateStatusLine;
 
@@ -27,7 +29,7 @@ namespace Exercises.AsyncAwait
             _storage = storage;
             _logger = logger;
             _urls = new Dictionary<string, string>();
-            _queue = new Queue<string>();
+            _queue = new ConcurrentQueue<string>();
             _workingTasks = 0;
             _taskCompletionSource = new TaskCompletionSource<int>();
         }
@@ -54,8 +56,7 @@ namespace Exercises.AsyncAwait
 
             for (int i = 0; i < tasksInTimeQuantity; i++)
             {
-                TaskRun();
-                _workingTasks++;
+                TaskRunAsync();
             }
 
             return await t;
@@ -70,52 +71,90 @@ namespace Exercises.AsyncAwait
         }
 
 
-        private void TaskRun()
+        private async void TaskRunAsync()
         {
-            var newTask = GetContentFromUrlAsync(_queue.Dequeue());
-            newTask.ContinueWith((e) =>
+            _workingTasks++;
+            string url;
+            var DequeueWasSuccess = _queue.TryDequeue(out url);
+
+            if (!DequeueWasSuccess)
+            {
+                _logger.WriteRedText("Aaaaaaaaaaaaaaaaaaaa is bad");
+            }
+
+            await GetContentFromUrlAsync(url);
+
+            lock (locker)
             {
                 _workingTasks--;
+            }
+
+            lock (locker)
+            {
                 if (_queue.Count != 0)
                 {
-                    TaskRun();
-                    _workingTasks++;
+                    TaskRunAsync();
                 }
                 else if (_workingTasks == 0)
                 {
                     _taskCompletionSource.SetResult(1);
                 }
-            });
+            }
         }
 
         private async Task GetContentFromUrlAsync(string url)
         {
             _logger.Write("Start new download");
-            var response = await GetPage(url);
+            var response = await GetPageAsync(url);
             string downloadStatus;
 
-            if (response.IsSuccessStatusCode)
+            if (response != null)
             {
-                downloadStatus = "successful";
-                _urls[url] = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    downloadStatus = "successful";
+
+                    if (response.Content != null)
+                    {
+
+                        string content = await response.Content?.ReadAsStringAsync();
+
+                        _urls[url] = content;
+                    }
+                }
+                else
+                {
+                    downloadStatus = $"with fault (status code {response.StatusCode})";
+                }
+                _logger.Write($"Download finished {downloadStatus}.");
             }
-            else
+
+            lock (locker)
             {
-                downloadStatus = $"with fault (status code {response.StatusCode})";
+                counter++;
+                UpdateStatusLine.Raise(this, new StatusLineEventArgs(_quantumOfStatusLine));
+                _logger.Write($" {_queue.Count} downloads in queue ");
             }
-            
-            _logger.Write($"Download finished {downloadStatus}. {_queue.Count} downloads in queue ");
-            UpdateStatusLine.Raise(this, new StatusLineEventArgs(_quantumOfStatusLine));
         }
 
-        private static async Task<HttpResponseMessage> GetPage(string url)
+        private async Task<HttpResponseMessage> GetPageAsync(string url)
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("User-Agent",
+                try
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent",
                     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36");
-                var a = await client.GetAsync(url);
-                return a;
+                    var response = await client.GetAsync(url);
+
+                    return response;
+                }
+                catch (InvalidOperationException e)
+                when (e.Message == "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.")
+                {
+                    _logger.Write(e.Message);
+                    return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                }
             }
         }
     }

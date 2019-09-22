@@ -29,6 +29,7 @@ namespace Exercises.AsyncAwait
             urlSaver.UpdateStatusLine += ((s, e) =>
             {
                 statusLine.Update(e.Delta);
+                logger.WriteRedText($"Current status {statusLine.CurrentStatus} % ");
             });
 
             if (await urlSaver.TryGetGetUrlsFromStorageAsync())

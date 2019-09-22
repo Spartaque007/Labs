@@ -8,5 +8,10 @@ namespace Exercises.AsyncAwait
         {
             ConsoleWithLocker.WriteLine(logInformation);
         }
+
+        public void WriteRedText<T>(T s)
+        {
+            ConsoleWithLocker.WriteException(s);
+        }
     }
 }
