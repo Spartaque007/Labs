@@ -18,8 +18,8 @@ namespace Exercises.AsyncAwait
         private IDictionary<string, string> _urls;
         private decimal _quantumOfStatusLine;
         private int _workingTasks;
-        private object locker = new Object();
-        private int counter = 0;
+        private object _locker;
+        private int _counter;
 
         public event EventHandler<StatusLineEventArgs> UpdateStatusLine;
 
@@ -32,6 +32,8 @@ namespace Exercises.AsyncAwait
             _queue = new ConcurrentQueue<string>();
             _workingTasks = 0;
             _taskCompletionSource = new TaskCompletionSource<int>();
+            _counter = 0;
+            _locker = new Object();
         }
 
 
@@ -84,12 +86,12 @@ namespace Exercises.AsyncAwait
 
             await GetContentFromUrlAsync(url);
 
-            lock (locker)
+            lock (_locker)
             {
                 _workingTasks--;
             }
 
-            lock (locker)
+            lock (_locker)
             {
                 if (_queue.Count != 0)
                 {
@@ -129,9 +131,9 @@ namespace Exercises.AsyncAwait
                 _logger.Write($"Download finished {downloadStatus}.");
             }
 
-            lock (locker)
+            lock (_locker)
             {
-                counter++;
+                _counter++;
                 UpdateStatusLine.Raise(this, new StatusLineEventArgs(_quantumOfStatusLine));
                 _logger.Write($" {_queue.Count} downloads in queue ");
             }

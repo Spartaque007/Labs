@@ -8,6 +8,7 @@ namespace Exercises.AsyncAwait
         private static async Task Main()
         {
             var a = 0;
+
             while (a != 110)
             {
                 Console.Clear();
