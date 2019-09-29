@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Exercises.AsyncAwait
 {
-    public sealed class UrlSaver
+    public sealed class UrlSaver : IUrlSaver
     {
         private readonly IStorage _storage;
         private readonly ILogger _logger;
