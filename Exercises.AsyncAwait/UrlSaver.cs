@@ -45,8 +45,6 @@ namespace Exercises.AsyncAwait
 
         public async Task<int> GetDataFromUrlAsync(int downloadsQuantity)
         {
-            var t = _taskCompletionSource.Task;
-
             foreach (var url in _urls)
             {
                 _queue.Enqueue(url.Key);
@@ -61,7 +59,7 @@ namespace Exercises.AsyncAwait
                 TaskRunAsync();
             }
 
-            return await t;
+            return await _taskCompletionSource.Task;
         }
 
         public async Task SaveContentToStorageAsync()
@@ -89,10 +87,7 @@ namespace Exercises.AsyncAwait
             lock (_locker)
             {
                 _workingTasks--;
-            }
 
-            lock (_locker)
-            {
                 if (_queue.Count != 0)
                 {
                     TaskRunAsync();
@@ -119,7 +114,7 @@ namespace Exercises.AsyncAwait
                     if (response.Content != null)
                     {
 
-                        string content = await response.Content?.ReadAsStringAsync();
+                        var content = await response.Content?.ReadAsStringAsync();
 
                         _urls[url] = content;
                     }

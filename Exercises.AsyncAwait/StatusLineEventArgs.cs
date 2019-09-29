@@ -6,6 +6,7 @@ namespace Exercises.AsyncAwait
     {
         public decimal Delta { get; }
 
+
         public StatusLineEventArgs(decimal delta)
         {
             Delta = delta;
