@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Exercises.AsyncAwait
 {
-    public sealed class UrlSaver
+    public sealed class UrlSaver : IUrlSaver
     {
         private readonly IStorage _storage;
         private readonly ILogger _logger;
@@ -18,8 +18,8 @@ namespace Exercises.AsyncAwait
         private IDictionary<string, string> _urls;
         private decimal _quantumOfStatusLine;
         private int _workingTasks;
-        private object locker = new Object();
-        private int counter = 0;
+        private object _locker;
+        private int _counter;
 
         public event EventHandler<StatusLineEventArgs> UpdateStatusLine;
 
@@ -32,6 +32,8 @@ namespace Exercises.AsyncAwait
             _queue = new ConcurrentQueue<string>();
             _workingTasks = 0;
             _taskCompletionSource = new TaskCompletionSource<int>();
+            _counter = 0;
+            _locker = new Object();
         }
 
 
@@ -43,8 +45,6 @@ namespace Exercises.AsyncAwait
 
         public async Task<int> GetDataFromUrlAsync(int downloadsQuantity)
         {
-            var t = _taskCompletionSource.Task;
-
             foreach (var url in _urls)
             {
                 _queue.Enqueue(url.Key);
@@ -59,7 +59,7 @@ namespace Exercises.AsyncAwait
                 TaskRunAsync();
             }
 
-            return await t;
+            return await _taskCompletionSource.Task;
         }
 
         public async Task SaveContentToStorageAsync()
@@ -84,13 +84,10 @@ namespace Exercises.AsyncAwait
 
             await GetContentFromUrlAsync(url);
 
-            lock (locker)
+            lock (_locker)
             {
                 _workingTasks--;
-            }
 
-            lock (locker)
-            {
                 if (_queue.Count != 0)
                 {
                     TaskRunAsync();
@@ -117,7 +114,7 @@ namespace Exercises.AsyncAwait
                     if (response.Content != null)
                     {
 
-                        string content = await response.Content?.ReadAsStringAsync();
+                        var content = await response.Content?.ReadAsStringAsync();
 
                         _urls[url] = content;
                     }
@@ -129,9 +126,9 @@ namespace Exercises.AsyncAwait
                 _logger.Write($"Download finished {downloadStatus}.");
             }
 
-            lock (locker)
+            lock (_locker)
             {
-                counter++;
+                _counter++;
                 UpdateStatusLine.Raise(this, new StatusLineEventArgs(_quantumOfStatusLine));
                 _logger.Write($" {_queue.Count} downloads in queue ");
             }
