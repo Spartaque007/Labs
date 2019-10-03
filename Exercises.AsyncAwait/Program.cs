@@ -1,5 +1,4 @@
-﻿using Exercises.AsyncAwait.Dependences;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Unity;
 
@@ -9,12 +8,10 @@ namespace Exercises.AsyncAwait
     {
         private static async Task Main()
         {
-            var container = new Bootstraper().unityContainer;
-            Appliation app = new Appliation(container);
+            var container = new Bootstrapper().unityContainer;
+            var app = container.Resolve<Application>();
             await app.Run();
-
             Console.ReadLine();
-        
         }
     }
 }
