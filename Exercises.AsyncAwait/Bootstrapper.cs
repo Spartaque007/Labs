@@ -1,6 +1,5 @@
 ﻿using Exercises.AsyncAwait.Dependences;
 using Unity;
-using Unity.Injection;
 
 namespace Exercises.AsyncAwait
 {

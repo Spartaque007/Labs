@@ -8,7 +8,8 @@ namespace Exercises.AsyncAwait
     {
         private static async Task Main()
         {
-            var container = new Bootstrapper().unityContainer;
+            var bootstrapper = new Bootstrapper();
+            var container = bootstrapper.unityContainer;
             var app = container.Resolve<Application>();
             await app.Run();
             Console.ReadLine();
