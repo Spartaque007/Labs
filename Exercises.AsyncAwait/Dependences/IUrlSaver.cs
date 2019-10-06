@@ -7,8 +7,11 @@ namespace Exercises.AsyncAwait
     {
         event EventHandler<StatusLineEventArgs> UpdateStatusLine;
 
+
         Task<int> GetDataFromUrlAsync(int downloadsQuantity);
+
         Task SaveContentToStorageAsync();
+
         Task<bool> TryGetGetUrlsFromStorageAsync();
     }
 }

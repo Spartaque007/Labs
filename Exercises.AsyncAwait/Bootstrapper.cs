@@ -1,19 +1,20 @@
 ﻿using Exercises.AsyncAwait.Dependences;
 using Unity;
+using Unity.Injection;
 
 namespace Exercises.AsyncAwait
 {
     public class Bootstrapper
     {
-        public UnityContainer unityContainer;
+        public IUnityContainer UnityContainer { get; }
 
         public Bootstrapper()
         {
-            unityContainer = new UnityContainer();
-            unityContainer.RegisterSingleton<IUrlSaver, UrlSaver>();
-            unityContainer.RegisterSingleton<ILogger, ConsoleLogger>();
-            unityContainer.RegisterInstance<IStorage>(new LocalFileStorage(unityContainer.Resolve<ILogger>(), @".\urls\", "urls"), InstanceLifetime.Singleton);
-            unityContainer.RegisterInstance<IStatusReporter>(new AnimatedConsoleStatusReporter("Loading :"), InstanceLifetime.Singleton);
+            UnityContainer = new UnityContainer();
+            UnityContainer.RegisterSingleton<IUrlSaver, UrlSaver>();
+            UnityContainer.RegisterSingleton<ILogger, ConsoleLogger>();
+            UnityContainer.RegisterInstance<IStorage>(new LocalFileStorage(UnityContainer.Resolve<ILogger>(), @".\urls\", "urls"), InstanceLifetime.Singleton);
+            UnityContainer.RegisterInstance<IStatusReporter>(new AnimatedConsoleStatusReporter("Loading :"), InstanceLifetime.Singleton);
         }
     }
 }

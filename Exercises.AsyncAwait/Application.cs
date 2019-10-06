@@ -10,7 +10,7 @@ namespace Exercises.AsyncAwait
         private readonly IStatusReporter _statusReporter;
 
 
-        public Application(ILogger logger, IStorage storage, IUrlSaver urlSaver, IStatusReporter statusReporter)
+        public Application(ILogger logger, IUrlSaver urlSaver, IStatusReporter statusReporter)
         {
             _logger = logger;
             _statusReporter = statusReporter;
