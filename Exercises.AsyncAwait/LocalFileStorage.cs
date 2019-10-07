@@ -16,11 +16,11 @@ namespace Exercises.AsyncAwait
         private readonly ILogger _logger;
 
 
-        public LocalFileStorage(ILogger logger, string defaultDir, string urlsFileName)
+        public LocalFileStorage(ILogger logger, string dir, string urlsFileName)
         {
-            _defaultDir = defaultDir;
+            _defaultDir = $@"{dir}";
             _logger = logger;
-            _urlsFileName = $"./{urlsFileName}.txt";
+            _urlsFileName = $@"./{urlsFileName}.txt";
         }
 
 

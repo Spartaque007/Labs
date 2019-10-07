@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Exercises.AsyncAwait
 {
@@ -7,38 +8,11 @@ namespace Exercises.AsyncAwait
     {
         private static async Task Main()
         {
-            var a = 0;
-
-            while (a != 110)
-            {
-                Console.Clear();
-                ConsoleWithLocker.Clear();
-                await Foo();
-                Console.WriteLine("Press N for exit or any button to repeat downloads and press ENTER");
-                a = ConsoleWithLocker.Read();
-                Console.WriteLine(a);
-            }
-        }
-
-        private static async Task Foo()
-        {
-            var logger = new ConsoleLogger();
-            var storage = new LocalFileStorage(logger, @".\urls\", "urls");
-            var urlSaver = new UrlSaver(storage, logger);
-            var statusLine = new AnimatedConsoleStatusReporter("Loading progress: ");
-
-            urlSaver.UpdateStatusLine += ((s, e) =>
-            {
-                statusLine.Update(e.Delta);
-                logger.WriteRedText($"Current status {statusLine.CurrentStatus} % ");
-            });
-
-            if (await urlSaver.TryGetGetUrlsFromStorageAsync())
-            {
-                await urlSaver.GetDataFromUrlAsync(5);
-                await urlSaver.SaveContentToStorageAsync();
-                ConsoleWithLocker.WriteLine("************** ALL DONE**************");
-            }
+            var bootstrapper = new Bootstrapper();
+            var container = bootstrapper.UnityContainer;
+            var app = container.Resolve<Application>();
+            await app.Run();
+            Console.ReadLine();
         }
     }
 }
