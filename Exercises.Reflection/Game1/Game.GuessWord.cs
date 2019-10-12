@@ -14,19 +14,18 @@ namespace Game1
         private readonly string _statusFieldText = " ";
 
         private readonly string _wordsFilePuth;
-        private Word _secretWord;
         private StringBuilder _currentWordStatus;
         private StringBuilder _prevLetters;
         private ConsoleWritter _consoleWritter;
-
+        private string _secretWord;
         public Game()
         {
             _wordsFilePuth = @"./words.txt";
-            _secretWord = new Word(GetWordsFromFile(_wordsFilePuth));
-            _currentWordStatus = GetWordTemplate(_secretWord.TextWord);
+            _secretWord = GetWordsFromFile(_wordsFilePuth);
+            _currentWordStatus = GetWordTemplate(_secretWord);
             _prevLetters = new StringBuilder();
             _consoleWritter = new ConsoleWritter();
-          //  Console.CursorVisible = false;
+            //  Console.CursorVisible = false;
         }
 
         public void Run()
@@ -35,21 +34,23 @@ namespace Game1
             while (true)
             {
                 var input = Console.ReadLine();
-                if (input.Length > 1 || input.Length == 0)
+                if (input.Length == 1)
                 {
-                    ShowStatusWarning();
+                    for (int i = 0; i < _secretWord.Length; i++)
+                    {
+                        if(_secretWord.ToUpper()[i]==(input.ToUpper()[0]))
+                        {
+                            ShowStatusWarning("good");
+                            _consoleWritter.Print(_secretWordFieldText, input, (i + 1) * 2);
+                        }
+
+                    }
+                   
                 }
                 else
                 {
-                    if (_secretWord.TryCheckLetter(input[0]))
-                    {
-                        ShowStatus("good");
-                    }
-                    else
-                    {
-                        ShowStatus("no such letter");
-                    }
-                    Console.ReadKey();
+                    ShowStatusWarning("Error");
+
                 }
                 Console.CursorTop = 10;
                 Console.CursorLeft = 0;
@@ -82,7 +83,7 @@ namespace Game1
 
             //var wordsArray = textFromFile.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            var words = new string[] { "aaaaa", "bbbbbb", "ccccccc" };
+            var words = new string[] { "aabababba", "bbaabcbacbb", "cacbcacbcacbc" };
 
 
             return words[new Random().Next(words.Length - 1)];
@@ -98,12 +99,12 @@ namespace Game1
             return wordTemplate;
         }
 
-        private void ShowStatusWarning()
+        private void ShowStatusWarning(string text)
         {
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Red;
             _consoleWritter.Clear(_statusFieldText);
-            _consoleWritter.Print(_statusFieldText, "Enter one letter", 0);
+            _consoleWritter.Print(_statusFieldText, text, 0);
             Console.WriteLine();
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;

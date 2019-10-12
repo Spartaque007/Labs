@@ -8,7 +8,7 @@ namespace Game1
 {
     public class ConsoleWritter
     {
-        private Dictionary<string, ConsoleField> _fields;
+        private  Dictionary<string, ConsoleField> _fields;
 
         public void AddField(string fieldText,int LineNumber, ConsoleColor textColor = ConsoleColor.White)
         {

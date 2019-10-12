@@ -12,7 +12,7 @@ namespace Reflector
     {
         static void Main()
         {
-            Assembly game = Assembly.LoadFrom(@"d:\Projects\Labs\Labs\Exercises.Reflection\Game1\bin\Release\Game1.dll");
+            Assembly game = Assembly.LoadFrom(@"d:\Labs\Labs\Exercises.Reflection\Game1\bin\Release\Game1.dll");
             var t = game.GetType("Game1.Game");
             IGame a = (IGame)Activator.CreateInstance(t);
             a.Run();
