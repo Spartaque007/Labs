@@ -10,12 +10,15 @@ namespace Game1
     {
         private  Dictionary<string, ConsoleField> _fields;
 
-        public void AddField(string fieldText,int LineNumber, ConsoleColor textColor = ConsoleColor.White)
+        public ConsoleWritter()
         {
             _fields = new Dictionary<string, ConsoleField>();
+        }
+        public void AddField(string fieldText,int LineNumber, ConsoleColor textColor = ConsoleColor.White)
+        {
             var positionTop = LineNumber;
             var field = new ConsoleField(positionTop, fieldText, textColor);
-            _fields.Add(fieldText, field);
+            _fields[fieldText]= field;
         }
 
         public void  Print(string fieldName, string text)
