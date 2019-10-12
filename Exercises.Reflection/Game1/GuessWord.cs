@@ -128,7 +128,8 @@ namespace Game1
 
         private string GetWord()
         {
-            var data = ConfigurationManager.AppSettings["words"];
+            var data = /*ConfigurationManager.AppSettings["words"]*/ "red/yellow/green/blue/black/white";
+         
             var words = data.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             return words[new Random().Next(words.Length - 1)];
         }

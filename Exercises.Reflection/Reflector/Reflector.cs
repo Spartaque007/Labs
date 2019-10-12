@@ -10,14 +10,17 @@ namespace Reflector
 {
     public class Reflector
     {
-        private Dictionary<string, string> _games;
+        private bool _closeApp;
+
+        private Dictionary<string, Game> _games;
 
         public string DefaultPuth { get; set; }
 
 
         public Reflector()
         {
-            _games = new Dictionary<string, string>();
+            _closeApp = false;
+            _games = new Dictionary<string, Game>();
             DefaultPuth = ConfigurationManager.AppSettings["DefaultPuth"];
             ValidateAssemblies();
         }
@@ -25,45 +28,42 @@ namespace Reflector
 
         public void Run()
         {
-            Init();
+            while (!_closeApp)
+            {
+                Init();
+            }
+
         }
 
-       private void Init()
+
+        private void Init()
         {
             Dictionary<int, string> menu;
             Console.WriteLine("LOADED GAMES :\n");
             var LinesMenu = PrintGamesAndGetCount(out menu) + 4;
             var number = 0;
-            var UserInputIsValid = false;
-            var message = "\nPlease select game:";
-
-            while (!UserInputIsValid)
+            var userInputIsValid = false;
+            var message = "\nPlease select game or enter \"Exit\":";
+            while (!userInputIsValid)
             {
                 CleanConsolesLines(LinesMenu - 2, Console.CursorTop + 1);
                 Console.CursorTop = LinesMenu - 2;
                 Console.WriteLine(message);
                 var choice = Console.ReadLine();
-                UserInputIsValid = Int32.TryParse(choice, out number) && number >= 0 && number < menu.Count + 1;
+                bool _closeApp = choice.ToUpper() == "EXIT";
+                userInputIsValid = (Int32.TryParse(choice, out number) && number >= 0 && number < menu.Count + 1) || _closeApp;
 
-                if (!UserInputIsValid)
+                if (!userInputIsValid)
                 {
                     message = "\nINCORRECT INPUT!!!! Please select game again: ";
                 }
             }
 
-            if (UserInputIsValid)
+            if (userInputIsValid && !_closeApp)
             {
                 Console.Clear();
                 RunGame(menu[number]);
             }
-        }
-
-        private void RunGame(string gameName)
-        {
-            var game = Assembly.LoadFrom(_games[gameName]);
-            var t = game.GetType("Game1.Game");
-            IGame a = (IGame)Activator.CreateInstance(t);
-            a.Run();
         }
 
         private void ValidateAssemblies()
@@ -72,20 +72,23 @@ namespace Reflector
 
             foreach (var assembly in assemblies)
             {
-                var game = Assembly.LoadFrom(assembly);
-                PutToCollectionIfGame(game);
+                var assemlyWithGames = Assembly.LoadFrom(assembly);
+                GetGamesFromAssembly(assemlyWithGames);
             }
         }
 
-        private void PutToCollectionIfGame(Assembly game)
+        private void GetGamesFromAssembly(Assembly assembly)
         {
-            var types = game.GetTypes();
-            foreach (var t in types)
+            var types = assembly.GetTypes();
+            foreach (var type in types)
             {
-                if (typeof(IGame).IsAssignableFrom(t))
+                if (typeof(IGame).IsAssignableFrom(type))
                 {
-                    var name = GetName(t) ?? Path.GetFileName(game.Location).Replace(".dll", " ");
-                    _games.Add(name, game.Location);
+                    var game = new Game();
+                    game.Name = GetName(type) ?? Path.GetFileName(assembly.Location).Replace(".dll", " ");
+                    game.PuthToAssembly = assembly.Location;
+                    game.NameOfInstance = type.FullName;
+                    _games.Add(game.Name, game);
                 }
             }
         }
@@ -133,5 +136,14 @@ namespace Reflector
 
             return i;
         }
+
+        private void RunGame(string gameName)
+        {
+            var game = Assembly.LoadFrom(_games[gameName].PuthToAssembly);
+            var t = game.GetType(_games[gameName].NameOfInstance);
+            IGame a = (IGame)Activator.CreateInstance(t);
+            a.Run();
+        }
+
     }
 }
