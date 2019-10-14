@@ -17,12 +17,14 @@ namespace Game1
         private ConsoleWritter _consoleWritter;
         private string _secretWord;
 
+
         public GuessWord()
         {
             _secretWord = GetWord();
             _currentWordStatus = GetWordTemplate(_secretWord);
             _consoleWritter = new ConsoleWritter();
         }
+
 
         public void Run()
         {
@@ -41,6 +43,7 @@ namespace Game1
                     {
                         goGame = true;
                         inputIsValid = true;
+                        _secretWord = GetWord();
                     }
                     else if (input.ToUpper() == "N")
                     {
