@@ -11,7 +11,6 @@ namespace Reflector
     public class Reflector
     {
         private bool _closeApp;
-
         private Dictionary<string, Game> _games;
 
         public string DefaultPuth { get; set; }
