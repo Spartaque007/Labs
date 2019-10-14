@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ConsoleWritter\ConsoleField.cs" />
     <Compile Include="ConsoleWritter\ConsoleWritter.cs" />
+    <Compile Include="GuessNumber.cs" />
     <Compile Include="GuessWord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

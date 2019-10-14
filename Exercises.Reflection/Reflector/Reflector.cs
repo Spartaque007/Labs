@@ -10,7 +10,7 @@ namespace Reflector
 {
     public class Reflector
     {
-        private bool _closeApp;
+        private bool _exit;
         private Dictionary<string, Game> _games;
 
         public string DefaultPuth { get; set; }
@@ -18,7 +18,7 @@ namespace Reflector
 
         public Reflector()
         {
-            _closeApp = false;
+            _exit = false;
             _games = new Dictionary<string, Game>();
             DefaultPuth = ConfigurationManager.AppSettings["DefaultPuth"];
             ValidateAssemblies();
@@ -27,16 +27,16 @@ namespace Reflector
 
         public void Run()
         {
-            while (!_closeApp)
+            while (!_exit)
             {
                 Init();
             }
-
         }
 
 
         private void Init()
         {
+            Console.Clear();
             Dictionary<int, string> menu;
             Console.WriteLine("LOADED GAMES :\n");
             var LinesMenu = PrintGamesAndGetCount(out menu) + 4;
@@ -49,16 +49,16 @@ namespace Reflector
                 Console.CursorTop = LinesMenu - 2;
                 Console.WriteLine(message);
                 var choice = Console.ReadLine();
-                bool _closeApp = choice.ToUpper() == "EXIT";
-                userInputIsValid = (Int32.TryParse(choice, out number) && number >= 0 && number < menu.Count + 1) || _closeApp;
+                _exit = choice.ToUpper() == "EXIT";
+                userInputIsValid = (Int32.TryParse(choice, out number) && number >= 0 && number < menu.Count + 1) || _exit;
 
                 if (!userInputIsValid)
                 {
-                    message = "\nINCORRECT INPUT!!!! Please select game again: ";
+                    message = "\nINCORRECT INPUT!!!! Please select game again or enter \"Exit\": ";
                 }
             }
 
-            if (userInputIsValid && !_closeApp)
+            if (userInputIsValid && !_exit)
             {
                 Console.Clear();
                 RunGame(menu[number]);

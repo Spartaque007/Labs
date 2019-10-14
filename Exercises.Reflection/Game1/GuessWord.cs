@@ -46,8 +46,10 @@ namespace Game1
                     {
                         gameExit = true;
                         inputIsValid = true;
+                        goGame = false;
                     }
                 }
+
                 if (goGame)
                 {
                     Init();

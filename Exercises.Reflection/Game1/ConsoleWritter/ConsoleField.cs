@@ -68,12 +68,14 @@ namespace Game1
             RestorePrevCursorPosition();
         }
 
+
         private void SavePrevCursorPosition()
         {
             _prevCursorLeftPos = Console.CursorLeft;
             _prevCursorTopPos = Console.CursorTop;
             _prevTextColor = Console.ForegroundColor;
         }
+
         private void RestorePrevCursorPosition()
         {
             Console.CursorLeft = _prevCursorLeftPos;
