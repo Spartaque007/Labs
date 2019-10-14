@@ -1,6 +1,5 @@
 ﻿using GameInterface;
 using System;
-using System.Configuration;
 using System.Text;
 
 namespace Game1
@@ -128,8 +127,7 @@ namespace Game1
 
         private string GetWord()
         {
-            var data = /*ConfigurationManager.AppSettings["words"]*/ "red/yellow/green/blue/black/white";
-         
+            var data = "red/yellow/green/blue/black/white/orange/violet";
             var words = data.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             return words[new Random().Next(words.Length - 1)];
         }
