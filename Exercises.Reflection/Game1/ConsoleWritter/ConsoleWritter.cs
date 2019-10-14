@@ -11,6 +11,8 @@ namespace Game1
         {
             _fields = new Dictionary<string, ConsoleField>();
         }
+
+
         public void AddField(string fieldText,int LineNumber, ConsoleColor textColor = ConsoleColor.White)
         {
             var positionTop = LineNumber;

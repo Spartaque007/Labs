@@ -13,6 +13,7 @@ namespace Reflector
         private bool _exit;
         private Dictionary<string, Game> _games;
 
+
         public string DefaultPuth { get; set; }
 
 
@@ -37,16 +38,15 @@ namespace Reflector
         private void Init()
         {
             Console.Clear();
-            Dictionary<int, string> menu;
             Console.WriteLine("LOADED GAMES :\n");
-            var LinesMenu = PrintGamesAndGetCount(out menu) + 4;
+            var linesMenu = PrintGamesAndGetCount(out Dictionary<int, string> menu) + 4;
             var number = 0;
             var userInputIsValid = false;
             var message = "\nPlease select game or enter \"Exit\":";
             while (!userInputIsValid)
             {
-                CleanConsolesLines(LinesMenu - 2, Console.CursorTop + 1);
-                Console.CursorTop = LinesMenu - 2;
+                CleanConsolesLines(linesMenu - 2, Console.CursorTop + 1);
+                Console.CursorTop = linesMenu - 2;
                 Console.WriteLine(message);
                 var choice = Console.ReadLine();
                 _exit = choice.ToUpper() == "EXIT";
@@ -83,10 +83,12 @@ namespace Reflector
             {
                 if (typeof(IGame).IsAssignableFrom(type))
                 {
-                    var game = new Game();
-                    game.Name = GetName(type) ?? Path.GetFileName(assembly.Location).Replace(".dll", " ");
-                    game.PuthToAssembly = assembly.Location;
-                    game.NameOfInstance = type.FullName;
+                    var game = new Game
+                    {
+                        Name = GetName(type) ?? Path.GetFileName(assembly.Location).Replace(".dll", " "),
+                        PuthToAssembly = assembly.Location,
+                        NameOfInstance = type.FullName
+                    };
                     _games.Add(game.Name, game);
                 }
             }

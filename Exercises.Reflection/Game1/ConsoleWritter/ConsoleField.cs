@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game1
 {
@@ -20,6 +16,7 @@ namespace Game1
 
         public ConsoleColor TextColor { get; set; }
 
+
         public ConsoleField(int LineNumber, string permanentText, ConsoleColor textColor = ConsoleColor.White)
         {
             TextColor = textColor;
@@ -31,6 +28,7 @@ namespace Game1
             LeftPositionStart = Console.CursorLeft;
             LeftPositionCurrent = LeftPositionStart;
         }
+
 
         public void Print(string text)
         {

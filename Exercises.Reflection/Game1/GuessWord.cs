@@ -110,7 +110,6 @@ namespace Game1
                     ShowStatusWarning("good");
                     _consoleWritter.Print(_secretWordFieldText, letter, (i + 1) * 2 - 1);
                     countLetterInWord++;
-
                 }
             }
             return countLetterInWord;
@@ -133,7 +132,7 @@ namespace Game1
         private string GetWord()
         {
             var data = "red/yellow/green/blue/black/white/orange/violet";
-            var words = data.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var words = data.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             return words[new Random().Next(words.Length - 1)];
         }
 
@@ -144,6 +143,7 @@ namespace Game1
             {
                 wordTemplate.Append(" _");
             }
+
             return wordTemplate;
         }
 
@@ -156,14 +156,6 @@ namespace Game1
             Console.WriteLine();
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
-
-        }
-
-        private void ShowStatus(string text)
-        {
-            _consoleWritter.Clear(_statusFieldText);
-            _consoleWritter.Print(_statusFieldText, text, 0);
-            Console.WriteLine();
         }
     }
 }
