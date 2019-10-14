@@ -144,6 +144,5 @@ namespace Reflector
             IGame a = (IGame)Activator.CreateInstance(t);
             a.Run();
         }
-
     }
 }
