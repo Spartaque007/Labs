@@ -7,11 +7,14 @@ namespace Game1
     [GameName("GuessWord")]
     public class GuessWord : IGame
     {
-        private readonly string _guessWordFieldText = "******* Guess word********* (Enter \"exit\" for exit) ";
-        private readonly string _prevLettersFieldText = "Prev letters: ";
-        private readonly string _secretWordFieldText = "Word: ";
-        private readonly string _inputFieldText = "Enter letter: ";
-        private readonly string _statusFieldText = " ";
+        private const string LettersTemplate = " _";
+
+        private readonly string GuessWordFieldText = "******* Guess word********* (Enter \"exit\" for exit) ";
+        private readonly string PrevLettersFieldText = "Prev letters: ";
+        private readonly string SecretWordFieldText = "Word: ";
+        private readonly string InputFieldText = "Enter letter: ";
+        private readonly string StatusFieldText = " ";
+        
 
         private StringBuilder _currentWordStatus;
         private ConsoleWritter _consoleWritter;
@@ -68,7 +71,7 @@ namespace Game1
             bool gameFinished = false;
             while (!gameFinished)
             {
-                var input = Console.ReadLine();
+                var input = Console.ReadLine().ToUpper();
                 if (input.Length == 1)
                 {
                     var quantityLetterInWord = GetCountLettersInWordAndPrint(input);
@@ -105,10 +108,10 @@ namespace Game1
             var countLetterInWord = 0;
             for (int i = 0; i < _secretWord.Length; i++)
             {
-                if (_secretWord.ToUpper()[i] == (letter.ToUpper()[0]))
+                if (_secretWord[i] == (letter[0]))
                 {
                     ShowStatusWarning("good");
-                    _consoleWritter.Print(_secretWordFieldText, letter, (i + 1) * 2 - 1);
+                    _consoleWritter.Print(SecretWordFieldText, letter, (i + 1) * 2 - 1);
                     countLetterInWord++;
                 }
             }
@@ -119,12 +122,12 @@ namespace Game1
         {
             Console.Clear();
             Console.Beep();
-            _consoleWritter.AddField(_guessWordFieldText, 0);
-            _consoleWritter.AddField(_secretWordFieldText, 2);
-            _consoleWritter.Print(_secretWordFieldText, _currentWordStatus.ToString());
-            _consoleWritter.AddField(_prevLettersFieldText, 4);
-            _consoleWritter.AddField(_inputFieldText, 6);
-            _consoleWritter.AddField(_statusFieldText, 8);
+            _consoleWritter.AddField(GuessWordFieldText, 0);
+            _consoleWritter.AddField(SecretWordFieldText, 2);
+            _consoleWritter.Print(SecretWordFieldText, _currentWordStatus.ToString());
+            _consoleWritter.AddField(PrevLettersFieldText, 4);
+            _consoleWritter.AddField(InputFieldText, 6);
+            _consoleWritter.AddField(StatusFieldText, 8);
             Console.CursorTop = 10;
             Console.CursorLeft = 0;
         }
@@ -133,7 +136,8 @@ namespace Game1
         {
             var data = "red/yellow/green/blue/black/white/orange/violet";
             var words = data.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            return words[new Random().Next(words.Length - 1)];
+            var random = new Random();
+            return words[random.Next(words.Length - 1)].ToUpper();
         }
 
         private StringBuilder GetWordTemplate(string word)
@@ -141,7 +145,7 @@ namespace Game1
             var wordTemplate = new StringBuilder();
             for (int i = 0; i < word.Length; i++)
             {
-                wordTemplate.Append(" _");
+                wordTemplate.Append(LettersTemplate);
             }
 
             return wordTemplate;
@@ -151,8 +155,8 @@ namespace Game1
         {
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.Red;
-            _consoleWritter.Clear(_statusFieldText);
-            _consoleWritter.Print(_statusFieldText, text, 0);
+            _consoleWritter.Clear(StatusFieldText);
+            _consoleWritter.Print(StatusFieldText, text, 0);
             Console.WriteLine();
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;

@@ -11,7 +11,7 @@ namespace Reflector
     public class Reflector
     {
         private bool _exit;
-        private Dictionary<string, Game> _games;
+        private IDictionary<string, Game> _games;
 
 
         public string DefaultPuth { get; set; }
@@ -20,9 +20,8 @@ namespace Reflector
         public Reflector()
         {
             _exit = false;
-            _games = new Dictionary<string, Game>();
             DefaultPuth = ConfigurationManager.AppSettings["DefaultPuth"];
-            ValidateAssemblies();
+            _games = GetGames();
         }
 
 
@@ -39,18 +38,21 @@ namespace Reflector
         {
             Console.Clear();
             Console.WriteLine("LOADED GAMES :\n");
-            var linesMenu = PrintGamesAndGetCount(out Dictionary<int, string> menu) + 4;
+            var menu = GetMenuDictionary(_games);
+            PrintMenu(menu);
             var number = 0;
             var userInputIsValid = false;
             var message = "\nPlease select game or enter \"Exit\":";
+            Console.WriteLine(message);
+            var linesMenu = Console.CursorTop;
             while (!userInputIsValid)
             {
-                CleanConsolesLines(linesMenu - 2, Console.CursorTop + 1);
+                CleanConsolesLines(linesMenu, Console.CursorTop + 1);
                 Console.CursorTop = linesMenu - 2;
                 Console.WriteLine(message);
                 var choice = Console.ReadLine();
                 _exit = choice.ToUpper() == "EXIT";
-                userInputIsValid = (Int32.TryParse(choice, out number) && number >= 0 && number < menu.Count + 1) || _exit;
+                userInputIsValid = (Int32.TryParse(choice, out number) && number > 0 && number < menu.Count + 1) || _exit;
 
                 if (!userInputIsValid)
                 {
@@ -65,33 +67,21 @@ namespace Reflector
             }
         }
 
-        private void ValidateAssemblies()
+        private IDictionary<string, Game> GetGames()
         {
-            var assemblies = Directory.GetFiles(DefaultPuth, "*.dll");
+            var assemblyFiles = Directory.GetFiles(DefaultPuth, "*.dll");
 
-            foreach (var assembly in assemblies)
-            {
-                var assemlyWithGames = Assembly.LoadFrom(assembly);
-                GetGamesFromAssembly(assemlyWithGames);
-            }
-        }
-
-        private void GetGamesFromAssembly(Assembly assembly)
-        {
-            var types = assembly.GetTypes();
-            foreach (var type in types)
-            {
-                if (typeof(IGame).IsAssignableFrom(type))
-                {
-                    var game = new Game
-                    {
-                        Name = GetName(type) ?? Path.GetFileName(assembly.Location).Replace(".dll", " "),
-                        PuthToAssembly = assembly.Location,
-                        NameOfInstance = type.FullName
-                    };
-                    _games.Add(game.Name, game);
-                }
-            }
+            return assemblyFiles
+                 .Select(x => Assembly.LoadFrom(x))
+                 .SelectMany(a => a.GetTypes())
+                 .Where(x => typeof(IGame).IsAssignableFrom(x))
+                 .Select(gt => new Game
+                 {
+                     Name = GetName(gt) ?? Path.GetFileNameWithoutExtension(gt.Assembly.Location),
+                     PuthToAssembly = gt.Assembly.Location,
+                     NameOfInstance = gt.FullName
+                 })
+                 .ToDictionary(t => t.Name, t => t);
         }
 
         private string GetName(Type gameType)
@@ -123,19 +113,19 @@ namespace Reflector
             Console.CursorTop = prevPos;
         }
 
-        private int PrintGamesAndGetCount(out Dictionary<int, string> menu)
+        private IDictionary<int, string> GetMenuDictionary(IDictionary<string, Game> games)
         {
-            var i = 0;
-            menu = new Dictionary<int, string>();
+            return (IDictionary<int, string>)games
+                .Select((g, i) => new KeyValuePair<int, string>(i+1, g.Value.Name))
+                .ToDictionary(t=>t.Key,t=>t.Value);
+        }
 
-            for (i = 0; i < _games.Count; i++)
+        private void PrintMenu(IDictionary<int,string> menu)
+        {
+            foreach (var item in menu)
             {
-                var currentGame = _games.ElementAt(i);
-                Console.WriteLine(i + 1 + ") " + currentGame.Key);
-                menu.Add(i + 1, currentGame.Key);
+                Console.WriteLine(item.Key + ") " + item.Value);
             }
-
-            return i;
         }
 
         private void RunGame(string gameName)
