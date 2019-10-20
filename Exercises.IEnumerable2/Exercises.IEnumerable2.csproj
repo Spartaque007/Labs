@@ -43,10 +43,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IItem.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="ItemIenumeratorDepth.cs" />
-    <Compile Include="ItemIenumeratorWidth.cs" />
+    <Compile Include="Dependences\ItemIenumeratorDepth.cs" />
+    <Compile Include="Dependences\ItemIenumeratorWidth.cs" />
+    <Compile Include="Items\Article.cs" />
+    <Compile Include="Items\Comment.cs" />
+    <Compile Include="Items\Content.cs" />
+    <Compile Include="Items\Footer.cs" />
+    <Compile Include="Items\Header.cs" />
+    <Compile Include="Items\Likes.cs" />
+    <Compile Include="Items\Logo.cs" />
+    <Compile Include="Items\NavBar.cs" />
+    <Compile Include="Items\Root.cs" />
+    <Compile Include="Items\SimpleItem.cs" />
+    <Compile Include="Items\Title.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

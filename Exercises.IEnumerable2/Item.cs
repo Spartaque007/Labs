@@ -3,13 +3,10 @@ using System.Collections.Generic;
 
 namespace Exercises.IEnumerable2
 {
-    public class Item : IEnumerable, IItem
+    public abstract class Item : IEnumerable
     {
-        private IEnumerator _enumerator;
-
-        public string Name { get; set; }
-
-        public IList<IItem> Items { get; }
+        private IEnumerator<Item> _enumerator;
+        private IList<Item> _collection;
 
         public IEnumerator Enumerator
         {
@@ -17,41 +14,46 @@ namespace Exercises.IEnumerable2
             {
                 return _enumerator;
             }
-            set
+            private set
             {
-                if (value != null)
+                if (value == null)
                 {
-                    _enumerator = value;
+                    _enumerator = new ItemIenumeratorWidth(_collection);
                 }
                 else
                 {
-                    _enumerator = new ItemIenumeratorDepth();
+                    _enumerator = value;
                 }
             }
         }
 
-        public Item() : this(null) 
+        public string Name { get; set; }
+
+        public Item() : this(null)
         {
-            
+
         }
 
-        public Item(IEnumerator enumerator)
+        public Item(IEnumerator<Item> enumerator)
         {
-            Items = new List<IItem>();
+            _collection = new List<Item>();
             Enumerator = enumerator;
-        }
-
-
-        public void AddItem(IItem item)
-        {
-            Items.Add(item);
+            
         }
 
         public IEnumerator GetEnumerator()
         {
-            return Enumerator;
+            return _enumerator;
         }
 
+        public virtual void Draw()
+        {
+            System.Console.WriteLine(Name);
+        }
 
+        public virtual void AddItem(Item item)
+        {
+            _collection.Add(item);
+        }
     }
 }
