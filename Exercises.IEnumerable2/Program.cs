@@ -1,4 +1,5 @@
-﻿using Exercises.IEnumerable2.Items;
+﻿using Exercises.IEnumerable2.Dependences;
+using Exercises.IEnumerable2.Items;
 
 namespace Exercises.IEnumerable2
 {
@@ -33,9 +34,11 @@ namespace Exercises.IEnumerable2
             content.AddItem(comment2);
             content.AddItem(likes);
 
-            foreach (var node in root)
+            var iterator = new ItemsDepthIterator(root);
+
+            foreach (var nodes in iterator)
             {
-                ((Item)node).Draw();
+                ((Item)nodes).Draw();
             }
         }
     }
