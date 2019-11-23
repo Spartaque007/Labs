@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections;
 
 namespace Exercises.IEnumerable2.Items
 {
     class NavBar : Item
     {
-        public override void Draw() => Console.WriteLine(nameof(NavBar));
+        public override void Draw()
+        {
+            Console.WriteLine("NavBar");
+        }
     }
 }

@@ -34,11 +34,16 @@ namespace Exercises.IEnumerable2
             content.AddItem(comment2);
             content.AddItem(likes);
 
-            var iterator = new ItemsDepthIterator(root);
-
-            foreach (var nodes in iterator)
+            foreach (var i in root.ItemsInDepth)
             {
-                ((Item)nodes).Draw();
+                i.Draw();
+            }
+
+            System.Console.WriteLine("***********************");
+
+            foreach (var i in root.ItemInWidth)
+            {
+                i.Draw();
             }
         }
     }

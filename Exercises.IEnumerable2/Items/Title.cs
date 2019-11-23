@@ -4,6 +4,9 @@ namespace Exercises.IEnumerable2.Items
 {
     class Title : Item
     {
-        public override void Draw() => Console.WriteLine(nameof(Title));
+        public override void Draw()
+        {
+            Console.WriteLine("Title");
+        }
     }
 }

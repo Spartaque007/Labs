@@ -51,7 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dependences\ItemsDepthIterator.cs" />
+    <Compile Include="Dependences\ItemInWidthCollection.cs" />
+    <Compile Include="Dependences\ItemInDepthCollection.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Items\Article.cs" />
     <Compile Include="Items\Comment.cs" />
